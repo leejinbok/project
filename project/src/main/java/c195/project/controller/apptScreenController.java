@@ -20,11 +20,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class apptScreenController implements Initializable {
+    @FXML
+    private Label totNumLbl;
     @FXML
     private RadioButton allAppts;
     @FXML
@@ -38,7 +42,7 @@ public class apptScreenController implements Initializable {
     @FXML
     private Label weekApptLbl;
     @FXML
-    private ComboBox monthBox;
+    private ComboBox<Month> monthBox;
     @FXML
     private ComboBox<String> typeBox;
     @FXML
@@ -79,6 +83,7 @@ public class apptScreenController implements Initializable {
     private TableColumn<?,?> lastUpdateCol;
     @FXML
     private TableColumn<?,?> lastUpdatedByCol;
+
     private users currUser = new users(1,"bob","1234", LocalDateTime.now(),"script", Timestamp.valueOf(LocalDateTime.now()),"script");
     Stage stage;
     Parent scene;
@@ -94,6 +99,25 @@ public class apptScreenController implements Initializable {
         stage.centerOnScreen();
         stage.show();
     }
+
+    public int showMonthType(Month month, String type) {
+        ObservableList<appointments> totalAppts = apptQuery.getAllAppointments();
+        ObservableList<appointments> monthlyAppts = FXCollections.observableArrayList();
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime monthTime = LocalDateTime.of(now.getYear(), month, 1, 0, 0);
+        LocalDateTime nextMonthTime = LocalDateTime.of(now.getYear(), month.plus(1), 1, 0, 0);
+
+        if (!totalAppts.isEmpty()) {
+            for (appointments appt : totalAppts) {
+                if (appt.getType().equals(type) && appt.getStartTime().isAfter(monthTime) && appt.getStartTime().isBefore(nextMonthTime)) {
+                    monthlyAppts.add(appt);
+                }
+            }
+        }
+        return monthlyAppts.size();
+    }
+
 
     public void addApptButton(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("addApptScreen.fxml"));
@@ -219,10 +243,12 @@ public class apptScreenController implements Initializable {
     public void typeCb(ActionEvent actionEvent) {
     }
 
-    public void contactCb(ActionEvent actionEvent) {
-    }
-
     public void genReport(ActionEvent actionEvent) {
+        try {
+            totNumLbl.setText(String.valueOf(showMonthType(monthBox.getSelectionModel().getSelectedItem(), typeBox.getValue())));
+        } catch (NullPointerException e) {
+            userQuery.errorMessage("Please select month and appointment type to generate report!");
+        }
     }
 
     public void monthRadio(ActionEvent actionEvent) {
@@ -257,7 +283,6 @@ public class apptScreenController implements Initializable {
             }
             appTblView.setItems(weekAppointments);
         }
-
     }
 
     public void allAppts(ActionEvent actionEvent) {

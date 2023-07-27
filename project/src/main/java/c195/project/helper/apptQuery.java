@@ -16,6 +16,7 @@ public abstract class apptQuery {
     private static ObservableList<appointments> apptCheck = FXCollections.observableArrayList();
     private static ObservableList<appointments> contactAppointments = FXCollections.observableArrayList();
     private static ObservableList<appointments> weeklyAppointments = FXCollections.observableArrayList();
+
     public static ObservableList<LocalDateTime> bookedStartTimes(int customer) {
         ObservableList<LocalDateTime> bookedAppts = FXCollections.observableArrayList();
         try {
@@ -166,7 +167,29 @@ public abstract class apptQuery {
         ps.setInt(1,apptId);
         ps.executeUpdate();
     }
-
+    public static void update(String title, String description, String location, String type, Timestamp startTime, Timestamp endTime, Timestamp create_date, String created_by, Timestamp last_update, String last_updated_by, int customer_id, int user_id, int contact_id, int ID) throws SQLException {
+        try {
+            String sql = "Update appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Create_Date = ?, Created_By = ?, Last_Update = ?, Last_Updated_By = ?, Customer_ID = ?, User_ID = ?, Contact_ID = ? WHERE Appointment_ID = ?";
+            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+            ps.setString(1, title);
+            ps.setString(2, description);
+            ps.setString(3, location);
+            ps.setString(4, type);
+            ps.setTimestamp(5, startTime);
+            ps.setTimestamp(6, endTime);
+            ps.setTimestamp(7, create_date);
+            ps.setString(8, created_by);
+            ps.setTimestamp(9, last_update);
+            ps.setString(10, last_updated_by);
+            ps.setInt(11, customer_id);
+            ps.setInt(12, user_id);
+            ps.setInt(13, contact_id);
+            ps.setInt(14, ID);
+            ps.execute();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
     public static int insert(String title, String description, String location, String type, Timestamp startTime, Timestamp endTime, Timestamp create_date, String created_by, Timestamp last_update, String last_updated_by, int customer_id, int user_id, int contact_id) throws SQLException {
         String sql = "INSERT INTO appointments (Title, Description, Location, Type, Start, End, Create_Date, Created_By, Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -186,6 +209,7 @@ public abstract class apptQuery {
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
     }
+
     public static ObservableList<String> type = FXCollections.observableArrayList(
             "Initial", "Routine", "Follow-up"
     );

@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="c195.project.controller.apptScreenController">
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="c195.project.controller.apptScreenController">
    <children>
       <ScrollPane layoutX="120.0" layoutY="111.0" prefHeight="600.0" prefWidth="960.0">
          <content>
@@ -45,7 +45,7 @@
       <Button layoutX="1043.0" layoutY="736.0" mnemonicParsing="false" onAction="#exitButton" text="Exit" />
       <HBox alignment="CENTER_LEFT" layoutX="120.0" layoutY="39.0" prefHeight="50.0" prefWidth="360.0" spacing="20.0">
          <children>
-            <ComboBox fx:id="contactBox" onAction="#contactCb" prefWidth="150.0" />
+            <ComboBox fx:id="contactBox" prefWidth="150.0" />
             <Button mnemonicParsing="false" onAction="#reportButton" text="Generate Contact Report" />
          </children>
          <opaqueInsets>

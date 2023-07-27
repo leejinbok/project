@@ -3,7 +3,6 @@ package c195.project.controller;
 import c195.project.Main;
 import c195.project.helper.apptQuery;
 import c195.project.helper.contactsQuery;
-import c195.project.helper.localDateTime;
 import c195.project.helper.userQuery;
 import c195.project.model.appointments;
 import c195.project.model.contacts;
@@ -127,6 +126,10 @@ public class addApptScreenController implements Initializable {
                 return;
             }
 
+            Instant instant = Instant.now();
+            LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+
+
             customers c = customerCb.getValue();
             int customerId = c.getCustomer_id();
             contacts co = contactIdCb.getValue();
@@ -140,7 +143,7 @@ public class addApptScreenController implements Initializable {
             currentAppointment.setType(String.valueOf(typeCb.getValue()));
             currentAppointment.setStartTime(sTime);
             currentAppointment.setEndTime(eTime);
-            currentAppointment.setCreate_date(localDateTime.timeNow());
+            currentAppointment.setCreate_date(ldt);
             currentAppointment.setCreated_by(currUser.getUser_name());
             currentAppointment.setLast_update(Timestamp.valueOf(LocalDateTime.now()));
             currentAppointment.setLast_updated_by(currUser.getUser_name());
@@ -253,17 +256,6 @@ public class addApptScreenController implements Initializable {
             LocalDate lDate = ldt.toLocalDate();
             if (lTime.isAfter((LocalTime) endTime.getValue()) && lDate.isEqual(startDatePicker.getValue()) ||
                     lTime.equals( endTime.getValue()) && lDate.isEqual(startDatePicker.getValue())){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean afterEnd(ObservableList<LocalDateTime> endTimes) {
-        for (LocalDateTime ldt : endTimes) {
-            LocalTime lTime = ldt.toLocalTime();
-            LocalDate lDate = ldt.toLocalDate();
-            if (lTime.isAfter((LocalTime) endTime.getValue()) && lDate.isEqual(startDatePicker.getValue())){
                 return true;
             }
         }

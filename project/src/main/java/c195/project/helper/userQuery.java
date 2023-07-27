@@ -86,9 +86,16 @@ public abstract class userQuery {
         alert.showAndWait();
     }
 
+
     public static void infoMessage(String errorMsg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setContentText(errorMsg);
+        alert.showAndWait();
+    }
+    public static void updatePopup() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Confirmation");
+        alert.setContentText("Your changes have been saved");
         alert.showAndWait();
     }
 }

@@ -93,10 +93,7 @@ public class modApptScreenController implements Initializable {
             contactName = contactName.replaceAll("[\\[\\](){}]","");
             contactID(contactsQuery.returnContactID(contactName));
             int contactID = currContacts.getContact_ID();
-            System.out.println(currContacts.getContact_Name());
-            System.out.println(currContacts.getContact_ID());
 
-            //setting current appointment object to all the filled out fields
             currentAppointment.setTitle(titleTxt.getText());
             currentAppointment.setDescription(descTxt.getText());
             currentAppointment.setLocation(locTxt.getText());
@@ -135,9 +132,21 @@ public class modApptScreenController implements Initializable {
             }
 
 
-            apptQuery.insert(currentAppointment.getTitle(), currentAppointment.getDescription(), currentAppointment.getLocation(), currentAppointment.getType(), tsStart, tsEnd, tsNow, currentAppointment.getCreated_by(), currentAppointment.getLast_update(), currentAppointment.getLast_updated_by(), currentAppointment.getCustomer_id(),currentAppointment.getUser_id(),currentAppointment.getContact_id());
+
+            apptQuery.update(currentAppointment.getTitle(), currentAppointment.getDescription(), currentAppointment.getLocation(), currentAppointment.getType(), tsStart, tsEnd, tsNow, currentAppointment.getCreated_by(), currentAppointment.getLast_update(), currentAppointment.getLast_updated_by(), currentAppointment.getCustomer_id(),currentAppointment.getUser_id(),currentAppointment.getContact_id(), currentAppointment.getAppointmentID());
+            userQuery.updatePopup();
+
+            stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
+            try {
+                scene = FXMLLoader.load(Main.class.getResource("apptScreen.fxml"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            stage.setScene(new Scene(scene));
+            stage.centerOnScreen();
+            stage.show();
         } catch (Exception e) {
-            System.out.println("error is here!" + e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
     public void customerID(ObservableList<customers> customerName) {

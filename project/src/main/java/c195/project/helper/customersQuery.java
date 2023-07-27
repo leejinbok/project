@@ -94,7 +94,7 @@ public abstract class customersQuery {
             ps.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } localDateTime.updatePopup();
+        } userQuery.updatePopup();
     }
 
     public static int insert(String customer_name, String address, String postal, String phone, Timestamp create_date, String created_by, Timestamp last_update, String last_updated_by, int divId) throws SQLException {
