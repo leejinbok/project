@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="c195.project.controller.apptScreenController">
+   <children>
+      <ScrollPane layoutX="120.0" layoutY="111.0" prefHeight="600.0" prefWidth="960.0">
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="960.0">
+               <children>
+                  <TableView fx:id="appTblView" prefHeight="600.0" prefWidth="960.0">
+                     <columns>
+                        <TableColumn fx:id="apptIdCol" prefWidth="75.0" text="Appointment ID" />
+                        <TableColumn fx:id="titleCol" prefWidth="75.0" text="Title" />
+                        <TableColumn fx:id="descriptionCol" prefWidth="75.0" text="Description" />
+                        <TableColumn fx:id="locationCol" prefWidth="75.0" text="Location" />
+                        <TableColumn fx:id="typeCol" prefWidth="75.0" text="Type" />
+                        <TableColumn fx:id="startTimeCol" prefWidth="75.0" text="Start Time/Date" />
+                        <TableColumn fx:id="endTimeCol" prefWidth="75.0" text="End Time/Date" />
+                        <TableColumn fx:id="createCol" prefWidth="75.0" text="Create_Date" />
+                        <TableColumn fx:id="createdByCol" prefWidth="75.0" text="Created_By" />
+                        <TableColumn fx:id="lastUpdateCol" prefWidth="75.0" text="Last_Update" />
+                        <TableColumn fx:id="lastUpdatedByCol" prefWidth="75.0" text="Last_Updated_By" />
+                        <TableColumn fx:id="custIdCol" prefWidth="75.0" text="Customer ID" />
+                        <TableColumn fx:id="userIdCol" prefWidth="75.0" text="User ID" />
+                        <TableColumn fx:id="contactCol" prefWidth="75.0" text="Contact" />
+                     </columns>
+                  </TableView>
+               </children>
+            </AnchorPane>
+         </content>
+      </ScrollPane>
+      <Button layoutX="1043.0" layoutY="736.0" mnemonicParsing="false" onAction="#exitButton" text="Exit" />
+      <HBox alignment="CENTER_LEFT" layoutX="120.0" layoutY="39.0" prefHeight="50.0" prefWidth="360.0" spacing="20.0">
+         <children>
+            <ComboBox fx:id="contactBox" onAction="#contactCb" prefWidth="150.0" />
+            <Button mnemonicParsing="false" onAction="#reportButton" text="Generate Contact Report" />
+         </children>
+         <opaqueInsets>
+            <Insets left="10.0" right="10.0" />
+         </opaqueInsets>
+      </HBox>
+      <HBox alignment="CENTER" layoutX="120.0" layoutY="712.0" prefHeight="75.0" prefWidth="360.0" spacing="20.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#addApptButton" text="Add appt" />
+            <Button mnemonicParsing="false" onAction="#modApptBtn" text="Modify appt" />
+            <Button mnemonicParsing="false" onAction="#deleteButton" text="Delete appt" />
+            <Button mnemonicParsing="false" onAction="#addCustomerBtn" text="Add Cust" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="491.0" layoutY="14.0" prefHeight="50.0" prefWidth="360.0" spacing="20.0">
+         <children>
+            <ComboBox fx:id="monthBox" onAction="#monthCb" prefWidth="120.0" />
+            <ComboBox fx:id="typeBox" onAction="#typeCb" prefWidth="160.0" />
+            <Label fx:id="totNumLbl">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="942.0" layoutY="4.0" prefHeight="120.0" prefWidth="240.0">
+         <children>
+            <VBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="160.0" spacing="10.0">
+               <children>
+                  <RadioButton mnemonicParsing="false" onAction="#allAppts" selected="true" text="All appointments">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <toggleGroup>
+                        <ToggleGroup fx:id="report" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton mnemonicParsing="false" onAction="#monthRadio" text="This month" toggleGroup="$report">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </RadioButton>
+                  <RadioButton mnemonicParsing="false" onAction="#weekRadio" text="This week" toggleGroup="$report">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </RadioButton>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" />
+         </padding>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="518.0" layoutY="724.0" prefHeight="50.0" prefWidth="360.0" spacing="20.0">
+         <children>
+            <Label text="Total number of Appointments:">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="totalNumberLbl" />
+         </children>
+         <padding>
+            <Insets left="10.0" />
+         </padding>
+      </HBox>
+      <Button layoutX="797.0" layoutY="64.0" mnemonicParsing="false" onAction="#genReport" text="Generate" />
+   </children>
+</AnchorPane>
