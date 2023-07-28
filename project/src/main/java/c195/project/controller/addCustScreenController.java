@@ -31,7 +31,7 @@ public class addCustScreenController implements Initializable {
     @FXML
     private TextField postalTxt;
     @FXML
-    private ComboBox country;
+    private ComboBox<countries> country;
     @FXML
     private ComboBox state;
     @FXML
@@ -115,16 +115,9 @@ public class addCustScreenController implements Initializable {
     }
 
     public void countryCB(ActionEvent actionEvent) throws SQLException {
-        String Id = country.getValue().toString();
-        if (Id.equals("U.S")) {
-            state.setVisibleRowCount(10);
-            state.setItems(firstLevelDivisions.selectDivision(1));
-        } else if (Id.equals("Canada") ) {
-            state.setVisibleRowCount(4);
-            state.setItems(firstLevelDivisions.selectDivision(2));
-        } else if (Id.equals("UK")) {
-            state.setVisibleRowCount(6);
-            state.setItems(firstLevelDivisions.selectDivision(3));
+        if (country.getValue()!= null) {
+            int Id = country.getValue().getCountry_ID();
+            state.setItems(firstLevelDivisions.selectDivision(Id));
         }
     }
     public void sendUser(users users) {

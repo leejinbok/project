@@ -71,20 +71,23 @@ public class loginScreenController implements Initializable {
         if (idTxt.getText().isEmpty() || pwTxt.getText().isEmpty()) {
             userQuery.errorMessage("Please enter a username and password");
             out.println("Login Unsuccessful for user ID : " + idTxt.getText() + " at " + Timestamp.valueOf(LocalDateTime.now()));
-
+            out.flush();
             return;
         }
         if (!DBpw.contains(pwTxt.getText()) && (Locale.getDefault().getLanguage().equals("fr"))) {
             userQuery.errorMessage(rbs.getString("wronginfo"));
             out.println("Login Unsuccessful for user ID : " + idTxt.getText() + " at " + Timestamp.valueOf(LocalDateTime.now()));
+            out.flush();
             return;
         } else if (!DBpw.contains(pwTxt.getText())) {
             userQuery.errorMessage(wrongInfo);
             out.println("Login Unsuccessful for user ID : " + idTxt.getText() + " at " + Timestamp.valueOf(LocalDateTime.now()));
+            out.flush();
             return;
         }
 
         out.println("Login Successful for user ID : " + idTxt.getText() + " at " + Timestamp.valueOf(LocalDateTime.now()));
+        out.flush();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("apptScreen.fxml"));
         loader.setLocation(Main.class.getResource("apptScreen.fxml"));

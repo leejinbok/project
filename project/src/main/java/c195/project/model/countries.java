@@ -120,14 +120,13 @@ public class countries {
         return cList;
     }
 
-    public static ObservableList<countries> countryName(int divid) {
-        ObservableList<countries> countryList = FXCollections.observableArrayList();
+    public static countries getCountry(int divid) {
         try {
             String sql = "SELECT countries.Country_ID, countries.Country, countries.Create_Date, countries.Created_By, countries.Last_Update, countries.Last_Updated_By  FROM countries, first_level_divisions WHERE first_level_divisions.Division_ID = ? AND countries.Country_ID = first_level_divisions.Country_ID";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
             ps.setInt(1,divid);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()){
+            if (rs.next()) {
                 int countryId = rs.getInt("Country_ID");
                 String countryName = rs.getString("Country");
                 Timestamp createDate = rs.getTimestamp("Create_Date");
@@ -136,12 +135,12 @@ public class countries {
                 Timestamp lastUpdate = rs.getTimestamp("Last_Update");
                 String lastUpdatedBy = rs.getString("Last_Updated_By");
                 countries country = new countries(countryId, countryName, ldtcreateDate, createdBy, lastUpdate, lastUpdatedBy);
-                countryList.add(country);
+                return country;
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return countryList;
+        return null;
     }
     @Override
     public String toString() {

@@ -37,7 +37,7 @@ public class modCustScreenController implements Initializable {
     @FXML
     private TextField phoneTxt1;
     @FXML
-    private ComboBox country;
+    private ComboBox<countries> country;
     @FXML
     private ComboBox state;
     private customers currentCustomer;
@@ -81,7 +81,13 @@ public class modCustScreenController implements Initializable {
 
         idTxt1.setText(String.valueOf(currentCustomer.getCustomer_id()));
         custNameTxt1.setText(currentCustomer.getCustomer_name());
-        country.setValue(countries.countryName(divid));
+      //  country.setValue(countries.getCountry(divid));
+        countries selectedCountry = countries.getCountry(divid);
+        for (countries c : country.getItems()) {
+            if (c.getCountry_ID()==selectedCountry.getCountry_ID()) {
+                country.setValue(c);
+            }
+        }
         String countryName = country.getValue().toString();
         countryName = countryName.replaceAll("[\\[\\](){}]","");
         state.setItems(firstLevelDivisions.countryName(countryName));
@@ -121,26 +127,9 @@ public class modCustScreenController implements Initializable {
     }
 
     public void countryCB(ActionEvent actionEvent) throws SQLException, NullPointerException {
-        try {
-            if (country != null) {
-                String Id = country.getValue().toString();
-                switch (Id) {
-                    case "U.S" -> {
-                        state.setVisibleRowCount(10);
-                        state.setItems(firstLevelDivisions.selectDivision(1));
-                    }
-                    case "Canada" -> {
-                        state.setVisibleRowCount(4);
-                        state.setItems(firstLevelDivisions.selectDivision(2));
-                    }
-                    case "UK" -> {
-                        state.setVisibleRowCount(6);
-                        state.setItems(firstLevelDivisions.selectDivision(3));
-                    }
-                }
-            }
-        } catch (NullPointerException ignored) {
-
+        if (country.getValue()!= null) {
+            int Id = country.getValue().getCountry_ID();
+            state.setItems(firstLevelDivisions.selectDivision(Id));
         }
     }
 
