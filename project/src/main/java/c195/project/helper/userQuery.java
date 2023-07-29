@@ -12,39 +12,13 @@ import java.util.List;
 public abstract class userQuery {
 
     private static ObservableList<users> allUsers = FXCollections.observableArrayList();
-
-    public static ObservableList<users> getAllUsers() {
-        try {
-            String sql = "SELECT * FROM users";
-            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                int userID = rs.getInt("User_ID");
-                String user_name = rs.getString("User_Name");
-                String userPw = rs.getString("Password");
-                Timestamp ts = rs.getTimestamp("Create_Date");
-                LocalDateTime create_date = ts.toLocalDateTime();
-                String created_by = rs.getString("Created_By");
-                Timestamp last_update = rs.getTimestamp("Last_Update");
-                String last_updated_by = rs.getString("Last_Updated_By");
-                users currUser = new users(userID, user_name, userPw, create_date, created_by, last_update, last_updated_by);
-                allUsers.add(currUser);
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return allUsers;
-    }
-
-    public static ObservableList<users> getPw(String userName) {
-        ObservableList<users> pw = FXCollections.observableArrayList();
+    public static users select(String userName) {
         try {
             String sql = "SELECT * FROM users WHERE User_Name = ?";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
             ps.setString(1, userName);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 int userID = rs.getInt("User_ID");
                 String user_name = rs.getString("User_Name");
                 String userPw = rs.getString("Password");
@@ -54,13 +28,12 @@ public abstract class userQuery {
                 Timestamp last_update = rs.getTimestamp("Last_Update");
                 String last_updated_by = rs.getString("Last_Updated_By");
                 users currUser = new users(userID, user_name, userPw, create_date, created_by, last_update, last_updated_by);
-                pw.add(currUser);
+                return currUser;
             }
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return pw;
+        return null;
     }
 
     public static ObservableList<String> getPassword(String userName) {

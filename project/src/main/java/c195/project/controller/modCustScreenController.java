@@ -2,6 +2,8 @@ package c195.project.controller;
 
 import c195.project.Main;
 import c195.project.helper.customersQuery;
+import c195.project.helper.divisionsQuery;
+import c195.project.helper.userQuery;
 import c195.project.model.countries;
 import c195.project.model.customers;
 import c195.project.model.firstLevelDivisions;
@@ -39,15 +41,21 @@ public class modCustScreenController implements Initializable {
     @FXML
     private ComboBox<countries> country;
     @FXML
-    private ComboBox state;
+    private ComboBox<firstLevelDivisions> state;
     private customers currentCustomer;
     private users currUser;
     private firstLevelDivisions currDivision;
     public void saveButtonOnAction(ActionEvent actionEvent) throws SQLException {
 
-        setDivName(firstLevelDivisions.returnDivisionId(state.getValue().toString()));
+        if (country.getValue() == null) {
+            userQuery.errorMessage("Please select a country");
+            return;
+        } else if (state.getValue() == null) {
+            userQuery.errorMessage("Please select a state");
+            return;
+        }
+        setDivName(divisionsQuery.returnDivisionId(state.getValue().toString()));
         int Id = currDivision.getDivision_id();
-
 
         currentCustomer.setCustomer_id(Integer.parseInt(idTxt1.getText()));
         currentCustomer.setCustomer_name(custNameTxt1.getText());
@@ -78,10 +86,12 @@ public class modCustScreenController implements Initializable {
         currUser = user;
         currUser.setUser_name(user.getUser_name());
         currDivision = divisions;
-
         idTxt1.setText(String.valueOf(currentCustomer.getCustomer_id()));
         custNameTxt1.setText(currentCustomer.getCustomer_name());
-      //  country.setValue(countries.getCountry(divid));
+        addressTxt1.setText(currentCustomer.getAddress());
+        postalTxt1.setText(currentCustomer.getPostal());
+        phoneTxt1.setText(currentCustomer.getPhone());
+
         countries selectedCountry = countries.getCountry(divid);
         for (countries c : country.getItems()) {
             if (c.getCountry_ID()==selectedCountry.getCountry_ID()) {
@@ -90,19 +100,18 @@ public class modCustScreenController implements Initializable {
         }
         String countryName = country.getValue().toString();
         countryName = countryName.replaceAll("[\\[\\](){}]","");
-        state.setItems(firstLevelDivisions.countryName(countryName));
-        state.setValue(firstLevelDivisions.returnDivisionName(currentCustomer.getDivId()));
 
-        addressTxt1.setText(currentCustomer.getAddress());
-        postalTxt1.setText(currentCustomer.getPostal());
-        phoneTxt1.setText(currentCustomer.getPhone());
-
-//get combo box to get division ID and country ID - and link them
+        state.setItems(divisionsQuery.countryName(countryName));
+        firstLevelDivisions selectedState = divisionsQuery.selectCountry(divid);
+        for (firstLevelDivisions f : state.getItems()) {
+            if (f.getDivision_id()== selectedState.getDivision_id()){
+                state.setValue(f);
+            }
+        }
     }
 
     public void setDivName (ObservableList<firstLevelDivisions> divs) {
         for (firstLevelDivisions newDiv : divs) {
-
             currDivision.setDivision_id(newDiv.getDivision_id());
             currDivision.setDivision(newDiv.getDivision());
             currDivision.setCountry_id(newDiv.getCountry_id());
@@ -129,14 +138,12 @@ public class modCustScreenController implements Initializable {
     public void countryCB(ActionEvent actionEvent) throws SQLException, NullPointerException {
         if (country.getValue()!= null) {
             int Id = country.getValue().getCountry_ID();
-            state.setItems(firstLevelDivisions.selectDivision(Id));
+            state.setItems(divisionsQuery.selectDivision(Id));
         }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         country.setItems(countries.getAllCountries());
-
-
     }
 }

@@ -35,9 +35,9 @@ public class modApptScreenController implements Initializable {
     @FXML
     private TextField locTxt;
     @FXML
-    private ComboBox customerCb;
+    private ComboBox<customers> customerCb;
     @FXML
-    private ComboBox contactIdCb;
+    private ComboBox<contacts> contactIdCb;
     @FXML
     private TextField userIdTxt;
     @FXML
@@ -51,15 +51,40 @@ public class modApptScreenController implements Initializable {
     @FXML
     private DatePicker startDatePicker;
     private appointments currentAppointment;
-    private users currUser;
-    private customers currCustomer = new customers(1, "Bob", "1-1", "12345", ":123-4567", LocalDateTime.now(), "Bob", Timestamp.valueOf(LocalDateTime.now()) , "Bob",1);
-    private contacts currContacts = new contacts(1,"admin", "jlee785");
+    private static users currUser;
+    private customers currCustomer;
+    //= new customers(1, "Bob", "1-1", "12345", ":123-4567", LocalDateTime.now(), "Bob", Timestamp.valueOf(LocalDateTime.now()) , "Bob",1);
+    private contacts currContacts;
+    //  = new contacts(1,"admin", "jlee785");
 
     Stage stage;
     Parent scene;
 
     public void saveButtonOnAction(ActionEvent actionEvent) {
         try{
+            if (titleTxt.getText().isEmpty() ||
+                    descTxt.getText().isEmpty() ||
+                    locTxt.getText().isEmpty()) {
+                userQuery.errorMessage("Please fill in all the boxes");
+                return;
+            } else if (startDatePicker.getValue() == null) {
+                userQuery.errorMessage("Please pic a start date");
+                return;
+            } else if (typeCb.getValue() == null) {
+                userQuery.errorMessage("Please pick an appointment type");
+                return;
+            } else if (startTime.getValue() == null) {
+                userQuery.errorMessage("Please select a start time");
+                return;
+            } else if (endTime.getValue() == null) {
+                userQuery.errorMessage("Please select an end time");
+                return;
+            } else if (customerCb.getValue() == null) {
+                userQuery.errorMessage("Please select a customer");
+                return;
+            } else if (contactIdCb.getValue() == null) {
+                userQuery.errorMessage("Please select a contact");
+            }
             // creating and assigning local variables to appointment data
             LocalDateTime sTime = (LocalDateTime.of(startDatePicker.getValue(), (LocalTime) startTime.getValue()));
             LocalDateTime eTime = (LocalDateTime.of(startDatePicker.getValue(), (LocalTime) endTime.getValue()));
@@ -85,13 +110,7 @@ public class modApptScreenController implements Initializable {
                 userQuery.errorMessage("End time is out of business hours");
                 return;
             }
-            String customerName = customersQuery.returnCustomerName(currentAppointment.getCustomer_id()).toString();
-            customerName = customerName.replaceAll("[\\[\\](){}]","");
-            customerID(customersQuery.returnCustomerId(customerName));
 
-            String contactName = contactsQuery.select(currentAppointment.getContact_id()).toString();
-            contactName = contactName.replaceAll("[\\[\\](){}]","");
-            contactID(contactsQuery.returnContactID(contactName));
             int contactID = currContacts.getContact_ID();
 
             currentAppointment.setTitle(titleTxt.getText());
@@ -131,8 +150,6 @@ public class modApptScreenController implements Initializable {
                 return;
             }
 
-
-
             apptQuery.update(currentAppointment.getTitle(), currentAppointment.getDescription(), currentAppointment.getLocation(), currentAppointment.getType(), tsStart, tsEnd, tsNow, currentAppointment.getCreated_by(), currentAppointment.getLast_update(), currentAppointment.getLast_updated_by(), currentAppointment.getCustomer_id(),currentAppointment.getUser_id(),currentAppointment.getContact_id(), currentAppointment.getAppointmentID());
             userQuery.updatePopup();
 
@@ -149,26 +166,11 @@ public class modApptScreenController implements Initializable {
             System.out.println(e.getMessage());
         }
     }
-    public void customerID(ObservableList<customers> customerName) {
-        for (customers customer : customerName) {
-            currCustomer.setCustomer_id(customer.getCustomer_id());
-            currCustomer.setCustomer_name(customer.getCustomer_name());
-            currCustomer.setAddress(customer.getAddress());
-            currCustomer.setCreate_date(customer.getCreate_date());
-            currCustomer.setCreated_by(customer.getCreated_by());
-            currCustomer.setDivId(customer.getDivId());
-            currCustomer.setLast_updated_by(customer.getLast_updated_by());
-            currCustomer.setLast_update(customer.getLast_update());
-            currCustomer.setPostal(customer.getPostal());
-            currCustomer.setPhone(customer.getPhone());
+    public void customerID(customers customer) {
+        currCustomer = customer;
         }
-    }
-    public void contactID(ObservableList<contacts> contactName) {
-        for (contacts contacts : contactName) {
-            currContacts.setContact_ID(contacts.getContact_ID());
-            currContacts.setContact_Name(contacts.getContact_Name());
-            currContacts.setEmail(contacts.getEmail());
-        }
+    public void contactID(contacts contacts) {
+        currContacts = contacts;
     }
 
     public void cancelButton(ActionEvent actionEvent) {
@@ -190,12 +192,13 @@ public class modApptScreenController implements Initializable {
         endTime.setItems(apptQuery.getAppointmentEnd(0));
         contactIdCb.setItems(contactsQuery.getAllContacts());
         customerCb.setItems(customers.getAllCustomers());
-        typeCb.setItems(apptQuery.type);
+        try {
+            typeCb.setItems(apptQuery.appType());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void typeCbOnAction(ActionEvent actionEvent) {
-
-    }
 
     public void sendAppointments(appointments appointment, users user) throws SQLException {
         currentAppointment = appointment;
@@ -214,10 +217,12 @@ public class modApptScreenController implements Initializable {
         currentAppointment.setUser_id(appointment.getUser_id());
         currentAppointment.setContact_id(appointment.getContact_id());
 
-
         currUser = user;
         currUser.setUser_name(user.getUser_name());
         currUser.setUser_ID(user.getUser_ID());
+
+        contactID(contactsQuery.select(currentAppointment.getContact_id()));
+        customerID(customersQuery.select(currentAppointment.getCustomer_id()));
 
         apptIdTxt.setText(String.valueOf(currentAppointment.getAppointmentID()));
         titleTxt.setText(String.valueOf(currentAppointment.getTitle()));
@@ -228,14 +233,24 @@ public class modApptScreenController implements Initializable {
         startDatePicker.setValue(currentAppointment.getStartTime().toLocalDate());
         startTime.setValue(currentAppointment.getStartTime().toLocalTime());
         endTime.setValue(currentAppointment.getEndTime().toLocalTime());
-        String customerName = customersQuery.returnCustomerName(currentAppointment.getCustomer_id()).toString();
-        customerName = customerName.replaceAll("[\\[\\](){}]","");
-        customerCb.setValue( customerName);
-        String contactName = contactsQuery.select(currentAppointment.getContact_id()).toString();
-        contactName = contactName.replaceAll("[\\[\\](){}]","");
-        contactIdCb.setValue( contactName);
 
+        int customerID = currentAppointment.getCustomer_id();
+        int contactID = currentAppointment.getContact_id();
 
+        customerCb.setItems(customers.getAllCustomers());
+        customers customers = customersQuery.select(customerID);
+        for (customers c : customerCb.getItems()) {
+            if (c.getCustomer_id() == customers.getCustomer_id()) {
+                customerCb.setValue(c);
+            }
+        }
 
+        contactIdCb.setItems(contacts.getAllContacts());
+        contacts contacts = contactsQuery.select(contactID);
+        for (contacts c : contactIdCb.getItems()) {
+            if (c.getContact_ID() == contacts.getContact_ID()) {
+                contactIdCb.setValue(c);
+            }
+        }
     }
 }

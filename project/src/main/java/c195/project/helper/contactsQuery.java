@@ -76,24 +76,23 @@ public abstract class contactsQuery {
             String contactEmail = rs.getString("Email");
         }
     }
-    public static ObservableList<contacts> select(int id) throws SQLException {
-        ObservableList<contacts> contacts = FXCollections.observableArrayList();
+    public static contacts select(int id) throws SQLException {
         try {
             String sql = "SELECT * FROM contacts WHERE Contact_ID = ?";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 int ID = rs.getInt("Contact_ID");
                 String Name = rs.getString("Contact_Name");
                 String Email = rs.getString("Email");
                 contacts newContact = new contacts(ID, Name, Email);
-                contacts.add(newContact);
+                return newContact;
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return contacts;
+        return null;
     }
     public static ObservableList<contacts> select(String contactName) throws SQLException {
         ObservableList<contacts> contacts = FXCollections.observableArrayList();
@@ -114,24 +113,23 @@ public abstract class contactsQuery {
         }
         return contacts;
     }
-    public static ObservableList<contacts> returnContactID(String contactName) throws SQLException {
-       contactIDs.clear();
+    public static contacts returnContactID(String contactName) throws SQLException {
         try {
             String sql = "SELECT * FROM contacts WHERE Contact_Name = ?";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
             ps.setString(1, contactName);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 int ID = rs.getInt("Contact_ID");
                 String Name = rs.getString("Contact_Name");
                 String Email = rs.getString("Email");
                 contacts newContact = new contacts(ID, Name, Email);
-                contactIDs.add(newContact);
+                return newContact;
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return contactIDs;
+        return null;
     }
 
     public static ObservableList<contacts> getApptContacts() {

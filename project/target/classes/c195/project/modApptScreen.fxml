@@ -66,7 +66,7 @@
                   </FXCollections>
                </items>
             </ComboBox>
-            <ComboBox fx:id="typeCb" onAction="#typeCbOnAction" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ComboBox fx:id="typeCb" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Label text="End Time" GridPane.rowIndex="7" />
             <ComboBox fx:id="endTime" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
          </children>

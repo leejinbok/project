@@ -2,6 +2,7 @@ package c195.project.controller;
 
 import c195.project.Main;
 import c195.project.helper.customersQuery;
+import c195.project.helper.divisionsQuery;
 import c195.project.helper.userQuery;
 import c195.project.model.*;
 import javafx.collections.ObservableList;
@@ -22,6 +23,9 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+/**
+ * 
+ */
 public class addCustScreenController implements Initializable {
     public TextField custNameTxt;
     @FXML
@@ -55,8 +59,9 @@ public class addCustScreenController implements Initializable {
     Stage stage;
     Parent scene;
 
-    public void saveButtonOnAction(ActionEvent actionEvent) {
-        try{
+    public void saveButtonOnAction(ActionEvent actionEvent) throws SQLException {
+        try {
+
             currentCustomer.setCustomer_name(custNameTxt.getText());
             currentCustomer.setAddress(addressTxt.getText());
             currentCustomer.setPostal(postalTxt.getText());
@@ -70,12 +75,14 @@ public class addCustScreenController implements Initializable {
             currentCustomer.setLast_updated_by(currUser.getUser_name());
             if (country.getValue() == null) {
                 userQuery.errorMessage("Please select a country");
+                return;
             } else if (state.getValue() == null) {
                 userQuery.errorMessage("Please select a state");
+                return;
             }
-            setDivName(firstLevelDivisions.returnDivisionId(state.getValue().toString()));
+            setDivName(divisionsQuery.returnDivisionId(state.getValue().toString()));
 
-                if (custNameTxt.getText().isEmpty() ||
+            if (custNameTxt.getText().isEmpty() ||
                     addressTxt.getText().isEmpty() ||
                     postalTxt.getText().isEmpty() ||
                     phoneTxt.getText().isEmpty()) {
@@ -85,9 +92,19 @@ public class addCustScreenController implements Initializable {
 
             customersQuery.insert(currentCustomer.getCustomer_name(), currentCustomer.getAddress(), currentCustomer.getPostal(), currentCustomer.getPhone(), ts, currentCustomer.getCreated_by(), ut, currentCustomer.getLast_updated_by(), currentCustomer.getDivId());
             custTbl.setItems(customers.getAllCustomers());
+            userQuery.infoMessage("New Contact saved");
 
-        } catch (NullPointerException | SQLException e) {
-            userQuery.errorMessage(e.getMessage());
+            stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
+            try {
+                scene = FXMLLoader.load(Main.class.getResource("apptScreen.fxml"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            stage.setScene(new Scene(scene));
+            stage.centerOnScreen();
+            stage.show();
+        } catch (NullPointerException e){
+            System.out.println(e.getMessage());
         }
     }
     public void setDivName (ObservableList<firstLevelDivisions> divs) {
@@ -117,7 +134,7 @@ public class addCustScreenController implements Initializable {
     public void countryCB(ActionEvent actionEvent) throws SQLException {
         if (country.getValue()!= null) {
             int Id = country.getValue().getCountry_ID();
-            state.setItems(firstLevelDivisions.selectDivision(Id));
+            state.setItems(divisionsQuery.selectDivision(Id));
         }
     }
     public void sendUser(users users) {
@@ -163,7 +180,7 @@ public class addCustScreenController implements Initializable {
         modCustScreenController modCustScreenController = loader.getController();
         customers customer = custTbl.getSelectionModel().getSelectedItem();
         int divid = customer.getDivId();
-        setDivName(firstLevelDivisions.returnDivisionName(divid));
+        setDivName(divisionsQuery.returnDivisionName(divid));
         modCustScreenController.sendCustomers(customer, currDivision, currUser);
 
         stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();

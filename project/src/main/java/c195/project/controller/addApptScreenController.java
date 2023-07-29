@@ -20,6 +20,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.*;
 import java.util.ResourceBundle;
@@ -29,8 +30,6 @@ import java.util.ResourceBundle;
  */
 public class addApptScreenController implements Initializable {
 
-    @FXML
-    private ComboBox testBox1;
     @FXML
     private TextField titleTxt;
     @FXML
@@ -81,9 +80,9 @@ public class addApptScreenController implements Initializable {
     private TableColumn<?,?> lastUpdateCol;
     @FXML
     private TableColumn<?,?> lastUpdatedByCol;
-    private users currUser;
+    private static users currUser;
     private appointments currentAppointment = new appointments(1,"initial","first","here","initial",LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now(),"Bob",Timestamp.valueOf(LocalDateTime.now()),"Bob",1,1,1);
-    private
+
     Stage stage;
     Parent scene;
 
@@ -93,14 +92,29 @@ public class addApptScreenController implements Initializable {
      */
     public void saveButtonOnAction(ActionEvent actionEvent) {
         try{
-            // creating and assigning local variables to appointment data
-            // steps :
-            /*
-            create zoneddatetime in the system default zone
-            create another zone date time from first zonedatetime converting to eastern time
-            get the local time (extract / convert)
-
-             */
+            if (titleTxt.getText().isEmpty() ||
+                    descTxt.getText().isEmpty() ||
+                    locTxt.getText().isEmpty()) {
+                userQuery.errorMessage("Please fill in all the boxes");
+                return;
+            } else if (startDatePicker.getValue() == null) {
+                userQuery.errorMessage("Please pic a start date");
+                return;
+            } else if (typeCb.getValue() == null) {
+                userQuery.errorMessage("Please pick an appointment type");
+                return;
+            } else if (startTime.getValue() == null) {
+                userQuery.errorMessage("Please select a start time");
+                return;
+            } else if (endTime.getValue() == null) {
+                userQuery.errorMessage("Please select an end time");
+                return;
+            } else if (customerCb.getValue() == null) {
+                userQuery.errorMessage("Please select a customer");
+                return;
+            } else if (contactIdCb.getValue() == null) {
+                userQuery.errorMessage("Please select a contact");
+            }
             LocalDateTime sTime = (LocalDateTime.of(startDatePicker.getValue(), (LocalTime) startTime.getValue()));
             LocalDateTime eTime = (LocalDateTime.of(startDatePicker.getValue(), (LocalTime) endTime.getValue()));
             Timestamp tsStart = Timestamp.valueOf(sTime);
@@ -134,7 +148,6 @@ public class addApptScreenController implements Initializable {
             int customerId = c.getCustomer_id();
             contacts co = contactIdCb.getValue();
             int contactId = co.getContact_ID();
-
 
             //setting current appointment object to all the filled out fields
             currentAppointment.setTitle(titleTxt.getText());
@@ -192,7 +205,6 @@ public class addApptScreenController implements Initializable {
                 return;
             }
 
-
             apptQuery.insert(currentAppointment.getTitle(), currentAppointment.getDescription(), currentAppointment.getLocation(), currentAppointment.getType(), tsStart, tsEnd, Timestamp.valueOf(LocalDateTime.now()), currentAppointment.getCreated_by(), currentAppointment.getLast_update(), currentAppointment.getLast_updated_by(), currentAppointment.getCustomer_id(),currentAppointment.getUser_id(),currentAppointment.getContact_id());
             appTblView.setItems(apptQuery.getAllAppointments());
         } catch (Exception e) {
@@ -202,8 +214,8 @@ public class addApptScreenController implements Initializable {
 
     /**
      *
-     * @param stTimes
-     * @return
+     * @param stTimes - observable list of all start times in the database
+     * @return - boolean value if local time and date in database is equal to or before the requesting start time
      */
     public boolean beforeStartEq(ObservableList<LocalDateTime> stTimes) {
         for (LocalDateTime ldt : stTimes) {
@@ -216,17 +228,12 @@ public class addApptScreenController implements Initializable {
         }
         return false;
     }
-    public boolean beforeStart(ObservableList<LocalDateTime> stTimes) {
-        for (LocalDateTime ldt : stTimes) {
-            LocalTime lTime = ldt.toLocalTime();
-            LocalDate lDate = ldt.toLocalDate();
-            if (lTime.isBefore((LocalTime) startTime.getValue()) && lDate.isEqual(startDatePicker.getValue())) {
 
-                return true;
-            }
-        }
-        return false;
-    }
+    /**
+     *
+     * @param stTimes - observable list of all start times in the database
+     * @return - boolean value if local time and date in database is after the requesting start time
+     */
     public boolean afterStart(ObservableList<LocalDateTime> stTimes) {
         for (LocalDateTime ldt : stTimes) {
             LocalTime lTime = ldt.toLocalTime();
@@ -238,6 +245,11 @@ public class addApptScreenController implements Initializable {
         return false;
     }
 
+    /**
+     *
+     * @param stTimes - observable list of all start times in the database
+     * @return - boolean value if local time and date in database is after or equal to the requesting start time
+     */
     public boolean afterStartEq(ObservableList<LocalDateTime> stTimes) {
         for (LocalDateTime ldt : stTimes) {
             LocalTime lTime = ldt.toLocalTime();
@@ -250,6 +262,11 @@ public class addApptScreenController implements Initializable {
         return false;
     }
 
+    /**
+     *
+     * @param endTimes - observable list of all end times in the database
+     * @return - boolean value if local time and date in database is after or equal to the requesting end time
+     */
     public boolean afterEndEq(ObservableList<LocalDateTime> endTimes) {
         for (LocalDateTime ldt : endTimes) {
             LocalTime lTime = ldt.toLocalTime();
@@ -261,6 +278,12 @@ public class addApptScreenController implements Initializable {
         }
         return false;
     }
+
+    /**
+     *
+     * @param endTimes - observable list of all end times in the database
+     * @return - boolean value if local time and date in database is before the requesting end time
+     */
     public boolean beforeEnd(ObservableList<LocalDateTime> endTimes) {
         for (LocalDateTime ldt : endTimes) {
             LocalTime lTime = ldt.toLocalTime();
@@ -272,6 +295,11 @@ public class addApptScreenController implements Initializable {
         return false;
     }
 
+    /**
+     *
+     * @param endTimes - observable list of all end times in the database
+     * @return - boolean value if local time and date in database is before or equal to the requesting end time
+     */
     public boolean beforeEndEq(ObservableList<LocalDateTime> endTimes) {
         for (LocalDateTime ldt : endTimes) {
             LocalTime lTime = ldt.toLocalTime();
@@ -284,7 +312,10 @@ public class addApptScreenController implements Initializable {
         return false;
     }
 
-
+    /**
+     * Control to go back to main appointment screen
+     * @param actionEvent - upon press of Cancel button, returns to main Appointment screen.
+     */
     public void cancelButton(ActionEvent actionEvent) {
         stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
         try {
@@ -296,17 +327,26 @@ public class addApptScreenController implements Initializable {
         stage.centerOnScreen();
         stage.show();
     }
+
+    /**
+     * to preserve user object information when updating created by or last modified by fields
+     * @param user - user object received from the main appointment screen.
+     */
     public void sendUser(users user) {
         currUser = user;
-        currUser.setUser_ID(user.getUser_ID());
-        currUser.setUser_name(user.getUser_name());
-        currUser.setCreate_date(user.getCreate_date());
-        currUser.setCreated_by(user.getCreated_by());
-        currUser.setLast_update(user.getLast_update());
-        currUser.setLast_updated_by(user.getLast_updated_by());
         userIdTxt.setText(String.valueOf(currUser.getUser_ID()));
     }
 
+    /**
+     * initializes on screen start. Initializes tableview of all appointments and populate datePicker and comboBoxes.
+     * @param location
+     * The location used to resolve relative paths for the root object, or
+     * {@code null} if the location is not known.
+     *
+     * @param resources
+     * The resources used to localize the root object, or {@code null} if
+     * the root object was not localized.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         appTblView.setItems(apptQuery.getAllAppointments());
@@ -330,13 +370,10 @@ public class addApptScreenController implements Initializable {
         endTime.setItems(apptQuery.getAppointmentEnd(0));
         contactIdCb.setItems(contactsQuery.getAllContacts());
         customerCb.setItems(customers.getAllCustomers());
-        typeCb.setItems(apptQuery.type);
-
+        try {
+            typeCb.setItems(apptQuery.appType());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
-
-    public void typeCbOnAction(ActionEvent actionEvent) {
-
-    }
-
-
 }

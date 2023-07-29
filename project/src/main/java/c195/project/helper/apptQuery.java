@@ -67,6 +67,21 @@ public abstract class apptQuery {
         }
         return 0;
     }
+    public static ObservableList<String> appType() throws SQLException {
+        ObservableList<String> typeList = FXCollections.observableArrayList();
+        try {
+            String sql = "SELECT DISTINCT Type FROM appointments";
+            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String type = rs.getString("Type");
+                typeList.add(type);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return typeList;
+    }
     public static ObservableList<appointments> getContactAppointments(contacts contact) throws SQLException {
         contactAppointments.clear();
         String sql = "SELECT * FROM appointments WHERE Contact_ID = ?";
@@ -97,37 +112,6 @@ public abstract class apptQuery {
         }
         return contactAppointments;
     }
-
-    public static ObservableList<appointments> getWeeklyAppointments() throws SQLException {
-        contactAppointments.clear();
-        String sql = "SELECT * FROM appointments WHERE week(Start) = week((now())";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()){
-            int apptId = rs.getInt("Appointment_ID");
-            String title = rs.getString("Title");
-            String description = rs.getString("Description");
-            String location = rs.getString("Location");
-            String type = rs.getString("Type");
-            Timestamp st = rs.getTimestamp("Start");
-            LocalDateTime start = st.toLocalDateTime();
-            Timestamp e = rs.getTimestamp("End");
-            LocalDateTime end = e.toLocalDateTime();
-            Timestamp c= rs.getTimestamp("Create_Date");
-            LocalDateTime create_date = c.toLocalDateTime();
-            String createdBy =  rs.getString("Created_By");
-            Timestamp last = rs.getTimestamp("Last_Update");
-            LocalDateTime last_update = last.toLocalDateTime();
-            String last_updated_by = rs.getString("Last_Updated_By");
-            int custId = rs.getInt("Customer_ID");
-            int userId = rs.getInt("User_ID");
-            int contactId = rs.getInt("Contact_ID");
-            appointments a = new appointments(apptId,title,description,location,type,start,end,create_date,createdBy,last,last_updated_by,custId,userId,contactId);
-            contactAppointments.add(a);
-        }
-        return contactAppointments;
-    }
-
     public static ObservableList<appointments> getAllAppointments() {
         allAppointments.clear();
         try {
@@ -210,10 +194,6 @@ public abstract class apptQuery {
         return rowsAffected;
     }
 
-    public static ObservableList<String> type = FXCollections.observableArrayList(
-            "Initial", "Routine", "Follow-up"
-    );
-
     public static ObservableList<Month> month () {
         ObservableList<Month> mo = FXCollections.observableArrayList();
         for (int i = 1; i <=12; i++) {
@@ -221,8 +201,6 @@ public abstract class apptQuery {
         }
         return mo;
     }
-
-
 
     public static ObservableList<LocalTime> getAppointmentStart(int startHour) {
         ObservableList<LocalTime> apptStart = FXCollections.observableArrayList();
@@ -241,35 +219,5 @@ public abstract class apptQuery {
             }
         }
         return apptEnd;
-    }
-
-    public static ObservableList<appointments> apptOverlapCheck(int customerId) throws SQLException {
-        apptCheck.clear();
-        String sql = "SELECT * FROM appointments WHERE Customer_ID = ?";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setInt(1,customerId);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()){
-            int apptId = rs.getInt("Appointment_ID");
-            String title = rs.getString("Title");
-            String description = rs.getString("Description");
-            String location = rs.getString("Location");
-            String type = rs.getString("Type");
-            Timestamp st = rs.getTimestamp("Start");
-            LocalDateTime start = st.toLocalDateTime();
-            Timestamp e = rs.getTimestamp("End");
-            LocalDateTime end = e.toLocalDateTime();
-            Timestamp c= rs.getTimestamp("Create_Date");
-            LocalDateTime create_date = c.toLocalDateTime();
-            String createdBy =  rs.getString("Created_By");
-            Timestamp last = rs.getTimestamp("Last_Update");
-            String last_updated_by = rs.getString("Last_Updated_By");
-            int custId = rs.getInt("Customer_ID");
-            int userId = rs.getInt("User_ID");
-            int contactId = rs.getInt("Contact_ID");
-            appointments a = new appointments(apptId,title,description,location,type,start,end,create_date,createdBy,last,last_updated_by,custId,userId,contactId);
-            apptCheck.add(a);
-        }
-        return apptCheck;
     }
 }

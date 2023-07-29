@@ -93,7 +93,7 @@ public class loginScreenController implements Initializable {
         loader.setLocation(Main.class.getResource("apptScreen.fxml"));
         Parent root = loader.load();
         apptScreenController apptScreenController = loader.getController();
-        apptScreenController.sendUser(userQuery.getPw(id));
+        apptScreenController.sendUser(userQuery.select(id));
 
         stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
         stage.setTitle("Appointment Window");

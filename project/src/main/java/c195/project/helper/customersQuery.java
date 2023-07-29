@@ -13,7 +13,33 @@ import java.time.LocalDateTime;
 
 public abstract class customersQuery {
     private static ObservableList<customers> customerNames = FXCollections.observableArrayList();
-    private static ObservableList<customers> customerIdList = FXCollections.observableArrayList();
+    public static customers select(int customerId) {
+        try {
+            String sql = "SELECT * FROM customers WHERE Customer_ID = ?";
+            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+            ps.setInt(1,customerId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()){
+                int contactId = rs.getInt("Customer_ID");
+                String contactName = rs.getString("Customer_Name");
+                String email = rs.getString("Address");
+                String postal = rs.getString("Postal_Code");
+                String phone = rs.getString("Phone");
+                Timestamp createDate = rs.getTimestamp("Create_Date");
+                LocalDateTime localCreate = createDate.toLocalDateTime();
+                String createdBy = rs.getString("Created_By");
+                Timestamp lastUpdate = rs.getTimestamp("Last_Update");
+                String lastUpdatedBy = rs.getString("Last_Updated_By");
+                int divId = rs.getInt("Division_ID");
+
+                customers c = new customers(contactId,contactName,email,postal,phone,localCreate,createdBy,lastUpdate,lastUpdatedBy,divId);
+                return c;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 
     public static ObservableList<customers> returnCustomerName(int customerId) {
         customerNames.clear();
@@ -43,34 +69,7 @@ public abstract class customersQuery {
         }
         return customerNames;
     }
-    public static ObservableList<customers> returnCustomerId(String customerName) {
-        customerIdList.clear();
-        try {
-            String sql = "SELECT * FROM customers WHERE Customer_Name = ?";
-            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-            ps.setString(1,customerName);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()){
-                int contactId = rs.getInt("Customer_ID");
-                String contactName = rs.getString("Customer_Name");
-                String email = rs.getString("Address");
-                String postal = rs.getString("Postal_Code");
-                String phone = rs.getString("Phone");
-                Timestamp createDate = rs.getTimestamp("Create_Date");
-                LocalDateTime localCreate = createDate.toLocalDateTime();
-                String createdBy = rs.getString("Created_By");
-                Timestamp lastUpdate = rs.getTimestamp("Last_Update");
-                String lastUpdatedBy = rs.getString("Last_Updated_By");
-                int divId = rs.getInt("Division_ID");
 
-                customers c = new customers(contactId,contactName,email,postal,phone,localCreate,createdBy,lastUpdate,lastUpdatedBy,divId);
-                customerIdList.add(c);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return customerIdList;
-    }
     public static void deleteCustomers(int customerId) throws SQLException {
         String sql = "DELETE FROM customers WHERE Customer_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);

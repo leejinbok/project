@@ -57,7 +57,6 @@
             <Button mnemonicParsing="false" onAction="#addApptButton" text="Add appt" />
             <Button mnemonicParsing="false" onAction="#modApptBtn" text="Modify appt" />
             <Button mnemonicParsing="false" onAction="#deleteButton" text="Delete appt" />
-            <Button mnemonicParsing="false" onAction="#addCustomerBtn" text="Add Cust" />
          </children>
       </HBox>
       <HBox alignment="CENTER_LEFT" layoutX="491.0" layoutY="14.0" prefHeight="50.0" prefWidth="360.0" spacing="20.0">
@@ -100,7 +99,7 @@
             <Insets bottom="10.0" />
          </padding>
       </HBox>
-      <HBox alignment="CENTER_LEFT" layoutX="518.0" layoutY="724.0" prefHeight="50.0" prefWidth="360.0" spacing="20.0">
+      <HBox alignment="CENTER_LEFT" layoutX="480.0" layoutY="725.0" prefHeight="50.0" prefWidth="360.0" spacing="20.0">
          <children>
             <Label text="Total number of Appointments:">
                <font>
@@ -114,5 +113,6 @@
          </padding>
       </HBox>
       <Button layoutX="797.0" layoutY="64.0" mnemonicParsing="false" onAction="#genReport" text="Generate" />
+      <Button layoutX="881.0" layoutY="734.0" mnemonicParsing="false" onAction="#addCustomerBtn" text="Customer Menu" />
    </children>
 </AnchorPane>

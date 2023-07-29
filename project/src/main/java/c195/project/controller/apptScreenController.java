@@ -30,18 +30,6 @@ public class apptScreenController implements Initializable {
     @FXML
     private Label totNumLbl;
     @FXML
-    private RadioButton allAppts;
-    @FXML
-    private RadioButton monthRadio;
-    @FXML
-    private RadioButton weekRadio;
-    @FXML
-    private Label allApptLbl;
-    @FXML
-    private Label monthApptLbl;
-    @FXML
-    private Label weekApptLbl;
-    @FXML
     private ComboBox<Month> monthBox;
     @FXML
     private ComboBox<String> typeBox;
@@ -49,10 +37,6 @@ public class apptScreenController implements Initializable {
     private ComboBox<contacts> contactBox;
     @FXML
     private Label totalNumberLbl;
-    @FXML
-    private RadioButton viewWeekRadio;
-    @FXML
-    private RadioButton viewMonthRadio;
     @FXML
     private TableView<appointments> appTblView;
     @FXML
@@ -84,7 +68,8 @@ public class apptScreenController implements Initializable {
     @FXML
     private TableColumn<?,?> lastUpdatedByCol;
 
-    private users currUser = new users(1,"bob","1234", LocalDateTime.now(),"script", Timestamp.valueOf(LocalDateTime.now()),"script");
+    private static users currUser;
+            //= new users(1,"bob","1234", LocalDateTime.now(),"script", Timestamp.valueOf(LocalDateTime.now()),"script");
     Stage stage;
     Parent scene;
 
@@ -124,7 +109,6 @@ public class apptScreenController implements Initializable {
         loader.setLocation(Main.class.getResource("addApptScreen.fxml"));
         Parent root = loader.load();
         addApptScreenController ApptScreenController = loader.getController();
-        System.out.println(currUser.getUser_name());
         ApptScreenController.sendUser(currUser);
 
         stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
@@ -134,7 +118,7 @@ public class apptScreenController implements Initializable {
         stage.show();
     }
 
-    public void addCustomerBtn(ActionEvent actionEvent) throws IOException, SQLException {
+    public void addCustomerBtn(ActionEvent actionEvent) throws IOException, NullPointerException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("addCustScreen.fxml"));
         loader.setLocation(Main.class.getResource("addCustScreen.fxml"));
         Parent root = loader.load();
@@ -168,26 +152,23 @@ public class apptScreenController implements Initializable {
 
         contactBox.setItems(contacts.getAllContacts());
         monthBox.setItems(apptQuery.month());
-        typeBox.setItems(apptQuery.type);
+        try {
+            typeBox.setItems(apptQuery.appType());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         try {
             totalNumberLbl.setText(String.valueOf(apptQuery.apptCount()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
-    public void sendUser (ObservableList<users> users) {
-        users.forEach(users1 -> currUser.setUser_ID(users1.getUser_ID()));
-        users.forEach(users1 -> currUser.setUser_name(users1.getUser_name()));
-        users.forEach(users1 -> currUser.setPassword(users1.getPassword()));
-        users.forEach(users1 -> currUser.setCreate_date(users1.getCreate_date()));
-        users.forEach(users1 -> currUser.setCreated_by(users1.getCreated_by()));
-        users.forEach(users1 -> currUser.setLast_update(users1.getLast_update()));
-        users.forEach(users1 -> currUser.setLast_updated_by(users1.getLast_updated_by()));
+    public void sendUser (users users) {
+        currUser = users;
     }
 
-    public void deleteButton(ActionEvent actionEvent) throws SQLException {
+    public void deleteButton(ActionEvent actionEvent) throws SQLException, NullPointerException {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmation");
             alert.setContentText("Are you sure you wish to delete this customer?");
@@ -205,7 +186,7 @@ public class apptScreenController implements Initializable {
 
         }
 
-    public void modApptBtn(ActionEvent actionEvent) throws IOException, SQLException {
+    public void modApptBtn(ActionEvent actionEvent) throws IOException, SQLException, NullPointerException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("modApptScreen.fxml"));
         loader.setLocation(Main.class.getResource("modApptScreen.fxml"));
         Parent root = loader.load();
@@ -235,7 +216,6 @@ public class apptScreenController implements Initializable {
         stage.centerOnScreen();
         stage.show();
     }
-
 
     public void monthCb(ActionEvent actionEvent) {
     }
