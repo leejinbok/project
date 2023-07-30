@@ -213,7 +213,7 @@ public class addApptScreenController implements Initializable {
     }
 
     /**
-     *
+     * boolean function to determine lower edge case of start time
      * @param stTimes - observable list of all start times in the database
      * @return - boolean value if local time and date in database is equal to or before the requesting start time
      */
@@ -230,7 +230,7 @@ public class addApptScreenController implements Initializable {
     }
 
     /**
-     *
+     * boolean function to determine upper bound of start time
      * @param stTimes - observable list of all start times in the database
      * @return - boolean value if local time and date in database is after the requesting start time
      */
@@ -246,7 +246,7 @@ public class addApptScreenController implements Initializable {
     }
 
     /**
-     *
+     * boolean function to determine upper edge case of start time
      * @param stTimes - observable list of all start times in the database
      * @return - boolean value if local time and date in database is after or equal to the requesting start time
      */
@@ -263,7 +263,7 @@ public class addApptScreenController implements Initializable {
     }
 
     /**
-     *
+     * boolean function to determine upper edge case of end time
      * @param endTimes - observable list of all end times in the database
      * @return - boolean value if local time and date in database is after or equal to the requesting end time
      */
@@ -280,7 +280,7 @@ public class addApptScreenController implements Initializable {
     }
 
     /**
-     *
+     * boolean function to determine lower bound of end time
      * @param endTimes - observable list of all end times in the database
      * @return - boolean value if local time and date in database is before the requesting end time
      */
@@ -296,7 +296,7 @@ public class addApptScreenController implements Initializable {
     }
 
     /**
-     *
+     * boolean function to determine lower edge case of end time
      * @param endTimes - observable list of all end times in the database
      * @return - boolean value if local time and date in database is before or equal to the requesting end time
      */

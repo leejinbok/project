@@ -110,7 +110,20 @@ public class modCustScreenController implements Initializable {
         }
     }
 
+    /**
+     * <p><b>LAMBDA EXPRESSION</b></p>
+     * a function to manual set values of current division from observable list of divisions from SQL lookup.
+     * @param divs - takes in parameter divs from SQL lookup of division names
+     */
     public void setDivName (ObservableList<firstLevelDivisions> divs) {
+        divs.forEach(newDiv -> currDivision.setDivision_id(newDiv.getDivision_id()));
+        divs.forEach(newDiv -> currDivision.setDivision(newDiv.getDivision()));
+        divs.forEach(newDiv -> currDivision.setCountry_id(newDiv.getCountry_id()));
+        divs.forEach(newDiv -> currDivision.setCreate_date(newDiv.getCreate_date()));
+        divs.forEach(newDiv -> currDivision.setCreated_by(newDiv.getCreated_by()));
+        divs.forEach(newDiv -> currDivision.setLast_update(newDiv.getLast_update()));
+        divs.forEach(newDiv -> currDivision.setLast_updated_by(newDiv.getLast_updated_by()));
+/*
         for (firstLevelDivisions newDiv : divs) {
             currDivision.setDivision_id(newDiv.getDivision_id());
             currDivision.setDivision(newDiv.getDivision());
@@ -119,7 +132,8 @@ public class modCustScreenController implements Initializable {
             currDivision.setCreated_by(newDiv.getCreated_by());
             currDivision.setLast_update(newDiv.getLast_update());
             currDivision.setLast_updated_by(newDiv.getLast_updated_by());
-        }
+
+ */
     }
 
     public void cancelButton(ActionEvent actionEvent) throws IOException {

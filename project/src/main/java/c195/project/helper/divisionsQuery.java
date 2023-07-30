@@ -17,7 +17,7 @@ public abstract class divisionsQuery {
     private static ObservableList<firstLevelDivisions> dList = FXCollections.observableArrayList();
     private static ObservableList<firstLevelDivisions> divList = FXCollections.observableArrayList();
     private static ObservableList<firstLevelDivisions> returnDivList = FXCollections.observableArrayList();
-    public static firstLevelDivisions selectCountry(int divisionId) throws SQLException {
+    public static firstLevelDivisions selectCountry(int divisionId) {
         try{
             String sql = "SELECT * FROM first_level_divisions WHERE Division_ID = ?";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -41,7 +41,7 @@ public abstract class divisionsQuery {
         return null;
     }
 
-    public static ObservableList<firstLevelDivisions> selectDivision(int countryId) throws SQLException {
+    public static ObservableList<firstLevelDivisions> selectDivision(int countryId) {
         dList.clear();
         try{
             String sql = "SELECT * FROM first_level_divisions WHERE Country_ID = ?";
@@ -91,7 +91,7 @@ public abstract class divisionsQuery {
         return dList;
     }
 
-    public static ObservableList<firstLevelDivisions> returnDivisionName(int divisionID) throws SQLException {
+    public static ObservableList<firstLevelDivisions> returnDivisionName(int divisionID){
         returnDivList.clear();
         try{
             String sql = "SELECT * FROM first_level_divisions WHERE Division_ID = ?";

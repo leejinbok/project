@@ -26,6 +26,14 @@ import java.time.Month;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+/**
+ * <p>The main screen for the program.</p>
+ * The screen contains three different reports:
+ * <p>all reports for selected contact</p>
+ * <p>number of total appointments for selected month and appointment type</p>
+ * <p>number of total appointments</p>
+ * There are also various buttons - for customer menu, add/modify/delete appointments, and the cancel button to go back to login screen.
+ */
 public class apptScreenController implements Initializable {
     @FXML
     private Label totNumLbl;
@@ -40,40 +48,43 @@ public class apptScreenController implements Initializable {
     @FXML
     private TableView<appointments> appTblView;
     @FXML
-    private TableColumn<?,?> apptIdCol;
+    private TableColumn<appointments,Integer> apptIdCol;
     @FXML
-    private TableColumn<?,?> titleCol;
+    private TableColumn<appointments,String> titleCol;
     @FXML
-    private TableColumn<?,?> descriptionCol;
+    private TableColumn<appointments,String> descriptionCol;
     @FXML
-    private TableColumn<?,?> locationCol;
+    private TableColumn<appointments,String> locationCol;
     @FXML
-    private TableColumn<?,?> contactCol;
+    private TableColumn<appointments,Integer> contactCol;
     @FXML
-    private TableColumn<?,?> typeCol;
+    private TableColumn<appointments,String> typeCol;
     @FXML
-    private TableColumn<?,?> startTimeCol;
+    private TableColumn<appointments,LocalDateTime> startTimeCol;
     @FXML
-    private TableColumn<?,?> endTimeCol;
+    private TableColumn<appointments,LocalDateTime> endTimeCol;
     @FXML
-    private TableColumn<?,?> custIdCol;
+    private TableColumn<appointments,Integer> custIdCol;
     @FXML
-    private TableColumn<?,?> userIdCol;
+    private TableColumn<appointments,String> userIdCol;
     @FXML
-    private TableColumn<?,?> createCol;
+    private TableColumn<appointments,LocalDateTime> createCol;
     @FXML
-    private TableColumn<?,?> createdByCol;
+    private TableColumn<appointments,String> createdByCol;
     @FXML
-    private TableColumn<?,?> lastUpdateCol;
+    private TableColumn<appointments,Timestamp> lastUpdateCol;
     @FXML
-    private TableColumn<?,?> lastUpdatedByCol;
-
+    private TableColumn<appointments,String> lastUpdatedByCol;
     private static users currUser;
             //= new users(1,"bob","1234", LocalDateTime.now(),"script", Timestamp.valueOf(LocalDateTime.now()),"script");
     Stage stage;
     Parent scene;
 
-    public void exitButton(ActionEvent actionEvent) throws IOException {
+    /**
+     * actions to take on press of exit button on screen. throws runTimeException for incorrect/bad fxml load
+     * @param actionEvent - on button press of Exit button
+     */
+    public void exitButton(ActionEvent actionEvent){
         stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
         try {
             scene = FXMLLoader.load(Main.class.getResource("loginScreen.fxml"));
@@ -85,6 +96,13 @@ public class apptScreenController implements Initializable {
         stage.show();
     }
 
+    /**
+     * <p>Shows how many appointments are scheduled for the month for the year.</p>
+     * <p><b>looks up monthly values for the CURRENT calendar year</b></p>
+     * @param month - value of the month selected in the month comboBox.
+     * @param type - value of the type selected in the type comboBox.
+     * @return - returns size of number of appointments in the selected month
+     */
     public int showMonthType(Month month, String type) {
         ObservableList<appointments> totalAppts = apptQuery.getAllAppointments();
         ObservableList<appointments> monthlyAppts = FXCollections.observableArrayList();
@@ -103,7 +121,11 @@ public class apptScreenController implements Initializable {
         return monthlyAppts.size();
     }
 
-
+    /**
+     * button to add appointments to the schedule. Maintains and sends current user to next screen to maintain user information
+     * @param actionEvent - on press of add appointment button, opens new screen and send current user information.
+     * @throws IOException - throws exceptions for when FXML loader cannot obtain resources correctly
+     */
     public void addApptButton(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("addApptScreen.fxml"));
         loader.setLocation(Main.class.getResource("addApptScreen.fxml"));
@@ -118,7 +140,12 @@ public class apptScreenController implements Initializable {
         stage.show();
     }
 
-    public void addCustomerBtn(ActionEvent actionEvent) throws IOException, NullPointerException {
+    /**
+     * button to customer menu. Opens up a new screen. Maintains and sends current user to next screen to maintain user information
+     * @param actionEvent - on press of customer menu button
+     * @throws IOException - throws exceptions for when FXML loader cannot obtain resources correctly
+     */
+    public void addCustomerBtn(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("addCustScreen.fxml"));
         loader.setLocation(Main.class.getResource("addCustScreen.fxml"));
         Parent root = loader.load();
@@ -132,6 +159,16 @@ public class apptScreenController implements Initializable {
         stage.show();
     }
 
+    /**
+     * Initialize method to populate values into tableView, comboBox, and columns. Also initializes and populates total number of appointments.
+     * @param location
+     * The location used to resolve relative paths for the root object, or
+     * {@code null} if the location is not known.
+     *
+     * @param resources
+     * The resources used to localize the root object, or {@code null} if
+     * the root object was not localized.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         appTblView.setItems(apptQuery.getAllAppointments());
@@ -151,9 +188,12 @@ public class apptScreenController implements Initializable {
         contactCol.setCellValueFactory(new PropertyValueFactory<>("contact_id"));
 
         contactBox.setItems(contacts.getAllContacts());
+        contactBox.setPromptText("Contacts");
         monthBox.setItems(apptQuery.month());
+        monthBox.setPromptText("Month of CURRENT year");
         try {
             typeBox.setItems(apptQuery.appType());
+            typeBox.setPromptText("Appointment Type");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -164,11 +204,28 @@ public class apptScreenController implements Initializable {
         }
     }
 
+    /**
+     * receives user login data into current appointment screen.
+     * @param users - user object retrieved from login screen
+     */
     public void sendUser (users users) {
         currUser = users;
     }
 
+    /**
+     * button to delete selected appointments from the tableview. Asks user for confirmation of deletion and appointment ID and type that was deleted.
+     * @param actionEvent - on press of delete button and selected cell value in the tableView
+     * @throws SQLException - throws exceptions for when SQL DB cannot find entries / null entries exist
+     */
     public void deleteButton(ActionEvent actionEvent) throws SQLException, NullPointerException {
+        appointments appointment = appTblView.getSelectionModel().getSelectedItem();
+        if (appointment == null) {
+            userQuery.errorMessage("Please select an appointment to delete");
+            return;
+        }
+        int apptID = appointment.getAppointmentID();
+        String apptType = appointment.getType();
+
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmation");
             alert.setContentText("Are you sure you wish to delete this customer?");
@@ -179,6 +236,7 @@ public class apptScreenController implements Initializable {
                 appTblView.setItems(apptQuery.getAllAppointments());
                 try {
                     totalNumberLbl.setText(String.valueOf(apptQuery.apptCount()));
+                    userQuery.infoMessage("Appointment number | " + apptID + " | type | " + apptType + " | has been deleted");
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
@@ -186,13 +244,24 @@ public class apptScreenController implements Initializable {
 
         }
 
+    /**
+     * button to modify selected appointment from appointments tableView. Sends selected appointment and user data to next screen to modify.
+     * @param actionEvent - on button press of modify appointment after selecting an appointment from appointments tableView
+     * @throws IOException - throws exceptions for when FXML loader cannot obtain resources correctly
+     * @throws SQLException - throws exceptions for when SQL DB cannot find entries / null entries exist
+     */
     public void modApptBtn(ActionEvent actionEvent) throws IOException, SQLException, NullPointerException {
+        appointments appointments = appTblView.getSelectionModel().getSelectedItem();
+        if (appointments == null) {
+            userQuery.errorMessage("Please select an appointment to edit");
+            return;
+        }
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("modApptScreen.fxml"));
         loader.setLocation(Main.class.getResource("modApptScreen.fxml"));
         Parent root = loader.load();
 
         modApptScreenController modApptScreenController = loader.getController();
-        appointments appointments = appTblView.getSelectionModel().getSelectedItem();
         modApptScreenController.sendAppointments(appointments, currUser);
 
         stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
@@ -202,27 +271,37 @@ public class apptScreenController implements Initializable {
         stage.show();
     }
 
+    /**
+     * <p><b>First Report</b></p>generates a report for all appointments booked for selected contact from contacts comboBox
+     * @param actionEvent - on press of report button
+     * @throws IOException - throws exceptions for when FXML loader cannot obtain resources correctly
+     * @throws SQLException - throws exceptions for when SQL DB cannot find entries / null entries exist
+     */
     public void reportButton(ActionEvent actionEvent) throws IOException, SQLException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("reportScreen.fxml"));
-        loader.setLocation(Main.class.getResource("reportScreen.fxml"));
-        Parent root = loader.load();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("reportScreen.fxml"));
+            loader.setLocation(Main.class.getResource("reportScreen.fxml"));
+            Parent root = loader.load();
 
-        reportScreenController reportScreenController = loader.getController();
-        reportScreenController.sendReport(apptQuery.getContactAppointments(contactBox.getValue()));
+            reportScreenController reportScreenController = loader.getController();
+            reportScreenController.sendReport(apptQuery.getContactAppointments(contactBox.getValue()));
 
-        stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
-        scene = new Scene(root).getRoot();
-        stage.setScene(scene.getScene());
-        stage.centerOnScreen();
-        stage.show();
+            stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
+            scene = new Scene(root).getRoot();
+            stage.setScene(scene.getScene());
+            stage.centerOnScreen();
+            stage.show();
+        } catch (NullPointerException e) {
+            userQuery.errorMessage("Please select a contact to generate a report for!");
+        }
     }
 
-    public void monthCb(ActionEvent actionEvent) {
-    }
-
-    public void typeCb(ActionEvent actionEvent) {
-    }
-
+    /**
+     * <p><b>Second Report</b></p> - selects month from month comboBox (current year) and type from type comboBox.
+     * <p>generates a number for all appointments with selected month and selected type</p>
+     * catches nullPointerException for not selecting month or type values.
+     * @param actionEvent - on press of generate report button, after selecting month and type boxes.
+     */
     public void genReport(ActionEvent actionEvent) {
         try {
             totNumLbl.setText(String.valueOf(showMonthType(monthBox.getSelectionModel().getSelectedItem(), typeBox.getValue())));
@@ -231,6 +310,11 @@ public class apptScreenController implements Initializable {
         }
     }
 
+    /**
+     * <p><b>Third Report</b></p>
+     * On press of month radioButton, select all appointments within a month (+/-)
+     * @param actionEvent - on press of radio button, populate the current appointments table with all appointments within a month of today's date
+     */
     public void monthRadio(ActionEvent actionEvent) {
         ObservableList<appointments> allAppointments = apptQuery.getAllAppointments();
         ObservableList<appointments> monthAppointments = FXCollections.observableArrayList();
@@ -248,6 +332,11 @@ public class apptScreenController implements Initializable {
         }
     }
 
+    /**
+     * <p><b>Third Report</b></p>
+     * On press of week radioButton, select all appointments within a week (+/-)
+     * @param actionEvent - on press of week radio button, populate the current appointments table with all appointments within a week of today's date.
+     */
     public void weekRadio(ActionEvent actionEvent) {
         ObservableList<appointments> allAppointments = apptQuery.getAllAppointments();
         ObservableList<appointments> weekAppointments = FXCollections.observableArrayList();
@@ -265,6 +354,11 @@ public class apptScreenController implements Initializable {
         }
     }
 
+    /**
+     * <p><b>Third Report</b></p>
+     * selected and populates by default. Displays all appointments (if there are any appointments to display)
+     * @param actionEvent - by default; or press of all appointments radio button
+     */
     public void allAppts(ActionEvent actionEvent) {
         ObservableList<appointments> tempAllAppointments = apptQuery.getAllAppointments();
 
@@ -273,19 +367,4 @@ public class apptScreenController implements Initializable {
         }
     }
 }
-//have a combobox to restrict appointment scheduling
-//error messages - scheduling appointment outside business hours
-//error messages - scheduling overlapping appointments
-//error messages - entering incorrect id / pw
-//popup message - if any appointment within 15 minutes
-//showing report - total number of customer appointments by type and month
-/*schedule for each contact in your organization that includes:
-appt ID
-title
-type
-description
-start date/time
-end date/time
-customer id
- */
-//additional report of your choice
+

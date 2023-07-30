@@ -27,6 +27,12 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+/**
+ * <p><b>Controller for log-in screen.</b></p>
+ * Displays system zone ID and checks for system default language (FR/EN).
+ * <p>Checks for user information and passes the user object to the next screen.</p>
+ * Logs all successful and unsuccessful attempts at log-in.
+ */
 public class loginScreenController implements Initializable {
     @FXML
     private Label zoneIdLbl;
@@ -47,10 +53,15 @@ public class loginScreenController implements Initializable {
     @FXML
     private TextField idTxt;
 
-    private String error = "";
     private String wrongInfo = "";
 
-
+    /**
+     * <p><b>Log-in check / validation</b></p>
+     * checks to match ID and password values to the database and allow user access. Logs on success/fail
+     * checks all appointment scheduled times to see if there's any appointments within 15 minutes of current login time.
+     * @param actionEvent - on press of login button, with correct values for id/pw filled out - user will be granted access to appointments screen.
+     * @throws IOException - throws exceptions for when FXML loader cannot obtain resources correctly
+     */
     public void loginOnAction(ActionEvent actionEvent) throws IOException {
 
         PrintWriter out= new PrintWriter(new BufferedWriter(new FileWriter("logon_activity.txt", true)));
@@ -120,10 +131,25 @@ public class loginScreenController implements Initializable {
         out.close();
     }
 
+    /**
+     * exits program on press of cancel button.
+     * @param actionEvent - on press of cancel button
+     */
     public void cancelOnAction(ActionEvent actionEvent) {
         System.exit(0);
     }
 
+    /**
+     * initialized on start; sets zoneID text to current system zone ID.
+     * <p>sets current resource bundle to check for FR settings and change labels appropriately</p>
+     * @param location
+     * The location used to resolve relative paths for the root object, or
+     * {@code null} if the location is not known.
+     *
+     * @param resources
+     * The resources used to localize the root object, or {@code null} if
+     * the root object was not localized.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ZoneId myZoneId = ZoneId.systemDefault();

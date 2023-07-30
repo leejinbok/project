@@ -27,6 +27,9 @@ import java.sql.Timestamp;
 import java.time.*;
 import java.util.ResourceBundle;
 
+/**
+ * Controller to modify selected appointment from previous screen.
+ */
 public class modApptScreenController implements Initializable {
     @FXML
     private TextField titleTxt;
@@ -53,13 +56,16 @@ public class modApptScreenController implements Initializable {
     private appointments currentAppointment;
     private static users currUser;
     private customers currCustomer;
-    //= new customers(1, "Bob", "1-1", "12345", ":123-4567", LocalDateTime.now(), "Bob", Timestamp.valueOf(LocalDateTime.now()) , "Bob",1);
     private contacts currContacts;
-    //  = new contacts(1,"admin", "jlee785");
-
     Stage stage;
     Parent scene;
 
+    /**
+     * Button to save the current appointment information.
+     * <p>Data is retrieved and populated from selected appointment from previous screen.</p>
+     * Values are populated, and any changes made is checked for null values before saving.
+     * @param actionEvent - on press of save button on screen
+     */
     public void saveButtonOnAction(ActionEvent actionEvent) {
         try{
             if (titleTxt.getText().isEmpty() ||
@@ -84,7 +90,9 @@ public class modApptScreenController implements Initializable {
                 return;
             } else if (contactIdCb.getValue() == null) {
                 userQuery.errorMessage("Please select a contact");
+                return;
             }
+
             // creating and assigning local variables to appointment data
             LocalDateTime sTime = (LocalDateTime.of(startDatePicker.getValue(), (LocalTime) startTime.getValue()));
             LocalDateTime eTime = (LocalDateTime.of(startDatePicker.getValue(), (LocalTime) endTime.getValue()));
@@ -111,8 +119,7 @@ public class modApptScreenController implements Initializable {
                 return;
             }
 
-            int contactID = currContacts.getContact_ID();
-
+            //set appropriate values for current appointments if they had been updated
             currentAppointment.setTitle(titleTxt.getText());
             currentAppointment.setDescription(descTxt.getText());
             currentAppointment.setLocation(locTxt.getText());
@@ -124,8 +131,8 @@ public class modApptScreenController implements Initializable {
             currentAppointment.setLast_update(now);
             currentAppointment.setLast_updated_by(currUser.getUser_name());
             currentAppointment.setUser_id(currUser.getUser_ID());
-            currentAppointment.setCustomer_id(currCustomer.getCustomer_id());
-            currentAppointment.setContact_id(contactID);
+            currentAppointment.setCustomer_id(customerCb.getValue().getCustomer_id());
+            currentAppointment.setContact_id(contactIdCb.getValue().getContact_ID());
 
             //create logic statements
             if (currentAppointment.getStartTime().isAfter(currentAppointment.getEndTime())) {
@@ -166,9 +173,19 @@ public class modApptScreenController implements Initializable {
             System.out.println(e.getMessage());
         }
     }
+
+    /**
+     * sets current customer values according to the current appointment's customer ID value
+     * @param customer - the customer object is passed in with customer ID lookup in the database
+     */
     public void customerID(customers customer) {
         currCustomer = customer;
         }
+
+    /**
+     * sets current contact values according to the current appointment's contact ID value
+     * @param contacts- the contact object is passed in with contact ID lookup in the database
+     */
     public void contactID(contacts contacts) {
         currContacts = contacts;
     }
@@ -201,29 +218,14 @@ public class modApptScreenController implements Initializable {
 
 
     public void sendAppointments(appointments appointment, users user) throws SQLException {
+        //sets current user and appointment from received values
         currentAppointment = appointment;
-        currentAppointment.setAppointmentID(appointment.getAppointmentID());
-        currentAppointment.setCreate_date(appointment.getCreate_date());
-        currentAppointment.setType(appointment.getType());
-        currentAppointment.setTitle(appointment.getTitle());
-        currentAppointment.setDescription(appointment.getDescription());
-        currentAppointment.setCustomer_id(appointment.getCustomer_id());
-        currentAppointment.setCreated_by(appointment.getCreated_by());
-        currentAppointment.setStartTime(appointment.getStartTime());
-        currentAppointment.setEndTime(appointment.getEndTime());
-        currentAppointment.setLast_updated_by(appointment.getLast_updated_by());
-        currentAppointment.setLocation(appointment.getLocation());
-        currentAppointment.setLast_updated_by(appointment.getLast_updated_by());
-        currentAppointment.setUser_id(appointment.getUser_id());
-        currentAppointment.setContact_id(appointment.getContact_id());
-
         currUser = user;
-        currUser.setUser_name(user.getUser_name());
-        currUser.setUser_ID(user.getUser_ID());
 
         contactID(contactsQuery.select(currentAppointment.getContact_id()));
         customerID(customersQuery.select(currentAppointment.getCustomer_id()));
 
+        //populates appropriate text boxes from retrieved values
         apptIdTxt.setText(String.valueOf(currentAppointment.getAppointmentID()));
         titleTxt.setText(String.valueOf(currentAppointment.getTitle()));
         descTxt.setText(String.valueOf(currentAppointment.getDescription()));

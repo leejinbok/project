@@ -23,21 +23,21 @@ import java.util.ResourceBundle;
 
 public class reportScreenController implements Initializable {
     @FXML
-    private TableColumn<?,?> userIdCol;
+    private TableColumn<appointments, Integer> userIdCol;
     @FXML
-    private TableColumn<?,?> custIdCol;
+    private TableColumn<appointments, Integer> custIdCol;
     @FXML
-    private TableColumn<?,?> endTimeCol;
+    private TableColumn<appointments,LocalDateTime> endTimeCol;
     @FXML
-    private TableColumn<?,?> startTimeCol;
+    private TableColumn<appointments,LocalDateTime> startTimeCol;
     @FXML
-    private TableColumn<?,?> typeCol;
+    private TableColumn<appointments,String> typeCol;
     @FXML
-    private TableColumn<?,?> descriptionCol;
+    private TableColumn<appointments,String> descriptionCol;
     @FXML
-    private TableColumn<?,?> titleCol;
+    private TableColumn<appointments,String> titleCol;
     @FXML
-    private TableColumn<?,?> apptIdCol;
+    private TableColumn<appointments, Integer> apptIdCol;
     @FXML
     private TableView<appointments> contactTblView;
     Stage stage;
@@ -46,15 +46,20 @@ public class reportScreenController implements Initializable {
 
     public void sendReport(ObservableList<appointments> contactAppointment) {
 
-        for (appointments currAppt : contactAppointment) {
-            customAppointment.setAppointmentID(currAppt.getAppointmentID());
-            customAppointment.setTitle(currAppt.getTitle());
-            customAppointment.setDescription(currAppt.getDescription());
-            customAppointment.setType(currAppt.getType());
-            customAppointment.setStartTime(currAppt.getStartTime());
-            customAppointment.setEndTime(currAppt.getEndTime());
-            customAppointment.setCustomer_id(currAppt.getCustomer_id());
-            customAppointment.setUser_id(currAppt.getUser_id());
+        contactAppointment.forEach(currAppt -> customAppointment.setAppointmentID(currAppt.getAppointmentID()));
+        contactAppointment.forEach(currAppt -> customAppointment.setTitle(currAppt.getTitle()));
+        contactAppointment.forEach(currAppt -> customAppointment.setDescription(currAppt.getDescription()));
+        contactAppointment.forEach(currAppt -> customAppointment.setType(currAppt.getType()));
+        contactAppointment.forEach(currAppt -> customAppointment.setStartTime(currAppt.getStartTime()));
+        contactAppointment.forEach(currAppt -> customAppointment.setEndTime(currAppt.getEndTime()));
+        contactAppointment.forEach(currAppt -> customAppointment.setCustomer_id(currAppt.getCustomer_id()));
+        contactAppointment.forEach(currAppt -> customAppointment.setContact_id(currAppt.getContact_id()));
+        contactAppointment.forEach(currAppt -> customAppointment.setLocation(currAppt.getLocation()));
+        contactAppointment.forEach(currAppt -> customAppointment.setUser_id(currAppt.getUser_id()));
+        contactAppointment.forEach(currAppt -> customAppointment.setCreated_by(currAppt.getCreated_by()));
+        contactAppointment.forEach(currAppt -> customAppointment.setCreate_date(currAppt.getCreate_date()));
+        contactAppointment.forEach(currAppt -> customAppointment.setLast_updated_by(currAppt.getLast_updated_by()));
+        contactAppointment.forEach(currAppt -> customAppointment.setLast_update(currAppt.getLast_update()));
 
             contactTblView.setItems(contactAppointment);
             apptIdCol.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
@@ -65,7 +70,6 @@ public class reportScreenController implements Initializable {
             endTimeCol.setCellValueFactory(new PropertyValueFactory<>("endTime"));
             custIdCol.setCellValueFactory(new PropertyValueFactory<>("customer_id"));
             userIdCol.setCellValueFactory(new PropertyValueFactory<>("user_id"));
-        }
     }
 
     public void returnButton(ActionEvent actionEvent) {

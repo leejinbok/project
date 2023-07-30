@@ -1,6 +1,7 @@
 package c195.project.controller;
 
 import c195.project.Main;
+import c195.project.helper.apptQuery;
 import c195.project.helper.customersQuery;
 import c195.project.helper.divisionsQuery;
 import c195.project.helper.userQuery;
@@ -24,7 +25,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
- * 
+ * addCustScreenController - add customers to the program
  */
 public class addCustScreenController implements Initializable {
     public TextField custNameTxt;
@@ -37,21 +38,21 @@ public class addCustScreenController implements Initializable {
     @FXML
     private ComboBox<countries> country;
     @FXML
-    private ComboBox state;
+    private ComboBox<firstLevelDivisions> state;
     @FXML
     private TableView<customers> custTbl;
     @FXML
-    private TableColumn<?,?> customerIdCol;
+    private TableColumn<customers, Integer> customerIdCol;
     @FXML
-    private TableColumn<?,?> customerNameCol;
+    private TableColumn<customers, String> customerNameCol;
     @FXML
-    private TableColumn<?,?> addressCol;
+    private TableColumn<customers, String> addressCol;
     @FXML
-    private TableColumn<?,?> postalCol;
+    private TableColumn<customers, String> postalCol;
     @FXML
-    private TableColumn<?,?> phoneCol;
+    private TableColumn<customers, String> phoneCol;
     @FXML
-    private TableColumn<?,?> divisionCol;
+    private TableColumn<customers, String> divisionCol;
     private LocalDateTime currTime = LocalDateTime.now();
     private customers currentCustomer = new customers(1, "Bob", "1-1", "12345", ":123-4567", LocalDateTime.now(), "Bob", Timestamp.valueOf(LocalDateTime.now()) , "Bob",1);
     private users currUser = new users(1,"bob","1234", LocalDateTime.now(),"script", Timestamp.valueOf(LocalDateTime.now()),"script");
@@ -59,6 +60,11 @@ public class addCustScreenController implements Initializable {
     Stage stage;
     Parent scene;
 
+    /**
+     * actions to take once save button is pressed
+     * @param actionEvent - on press of Save button, take action
+     * @throws SQLException - throws SQL and RunTimeExceptions. Catches and displays NullPointExceptions
+     */
     public void saveButtonOnAction(ActionEvent actionEvent) throws SQLException {
         try {
 
@@ -107,18 +113,26 @@ public class addCustScreenController implements Initializable {
             System.out.println(e.getMessage());
         }
     }
+
+    /**
+     * <p><b>LAMBDA EXPRESSION</b></p>
+     * a function to manual set values of current division from observable list of divisions from SQL lookup.
+     * @param divs - takes in parameter divs from SQL lookup of division names
+     */
     public void setDivName (ObservableList<firstLevelDivisions> divs) {
-        for (firstLevelDivisions newDiv : divs) {
-            currDivision.setDivision_id(newDiv.getDivision_id());
-            currDivision.setDivision(newDiv.getDivision());
-            currDivision.setCountry_id(newDiv.getCountry_id());
-            currDivision.setCreated_by(newDiv.getCreated_by());
-            currDivision.setCreate_date(newDiv.getCreate_date());
-            currDivision.setLast_update(newDiv.getLast_update());
-            currDivision.setLast_updated_by(newDiv.getLast_updated_by());
-        }
+        divs.forEach(newDiv -> currDivision.setDivision_id(newDiv.getDivision_id()));
+        divs.forEach(newDiv -> currDivision.setDivision(newDiv.getDivision()));
+        divs.forEach(newDiv -> currDivision.setCountry_id(newDiv.getCountry_id()));
+        divs.forEach(newDiv -> currDivision.setCreate_date(newDiv.getCreate_date()));
+        divs.forEach(newDiv -> currDivision.setCreated_by(newDiv.getCreated_by()));
+        divs.forEach(newDiv -> currDivision.setLast_update(newDiv.getLast_update()));
+        divs.forEach(newDiv -> currDivision.setLast_updated_by(newDiv.getLast_updated_by()));
     }
 
+    /**
+     * Actions taken when cancel button is pressed.
+     * @param actionEvent - on press of cancel button
+     */
     public void cancelButton(ActionEvent actionEvent) {
         stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
         try {
@@ -131,19 +145,36 @@ public class addCustScreenController implements Initializable {
         stage.show();
     }
 
+    /**
+     * Actions taken when country ComboBox is pressed. It populates the appropriate division values.
+     * @param actionEvent - on press of country ComboBox
+     * @throws SQLException - throws SQLException if queries to SQL DB result in errors.
+     */
     public void countryCB(ActionEvent actionEvent) throws SQLException {
         if (country.getValue()!= null) {
             int Id = country.getValue().getCountry_ID();
             state.setItems(divisionsQuery.selectDivision(Id));
         }
     }
+
+    /**
+     * receives current user object from main appointment screen to carry user values over.
+     * @param users - parameter of users is passed through previous screen apptScreen
+     */
     public void sendUser(users users) {
         currUser = users;
-
-        System.out.println(currUser.getUser_name());
-        System.out.println(currUser.getUser_ID());
     }
 
+    /**
+     * Objects that are initialized when screen is first run.
+     * @param location
+     * The location used to resolve relative paths for the root object, or
+     * {@code null} if the location is not known.
+     *
+     * @param resources
+     * The resources used to localize the root object, or {@code null} if
+     * the root object was not localized.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         custTbl.setItems(customers.getAllCustomers());
@@ -161,24 +192,52 @@ public class addCustScreenController implements Initializable {
         state.setVisibleRowCount(10);
     }
 
+    /**
+     * actions taken when delete button is pressed. Generates a confirmation to confirm delete
+     * @param actionEvent - on delete button press
+     * @throws SQLException - throws SQLExceptions for possible load errors in SQL DB query
+     */
     public void deleteOnAction(ActionEvent actionEvent) throws SQLException {
+        customers currCustomer = custTbl.getSelectionModel().getSelectedItem();
+        if (currCustomer == null) {
+            userQuery.errorMessage("Please select a customer to delete");
+            return;
+        }
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation");
         alert.setContentText("Are you sure you wish to delete this customer?");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get()==ButtonType.OK) {
-            customersQuery.deleteCustomers(((custTbl.getSelectionModel().getSelectedItem())).getCustomer_id());
+            if (apptQuery.getCustomerAppointments(currCustomer.getCustomer_id()).size() > 0) {
+                userQuery.errorMessage("Cannot delete customer with an appointment!");
+                return;
+            }
+            customersQuery.deleteCustomers(currCustomer.getCustomer_id());
             custTbl.setItems(customers.getAllCustomers());
         }
     }
-    public void editOnAction(ActionEvent actionEvent) throws IOException, SQLException {
+
+    /**
+     * <p>actions taken when modify button is pressed.</p>
+     * Passes customer, division, and user values to next screen.
+     * @param actionEvent - on press of modify button on screen.
+     * @throws IOException - throws exceptions for when FXML loader cannot obtain resources correctly
+     * @throws SQLException - throws exceptions for when SQL DB cannot find entries / null entries exist
+     */
+    public void editOnAction(ActionEvent actionEvent) throws IOException, SQLException, NullPointerException {
+        customers customer = custTbl.getSelectionModel().getSelectedItem();
+        if (customer == null) {
+            userQuery.errorMessage("Please select a customer to delete");
+            return;
+        }
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("modCustScreen.fxml"));
         loader.setLocation(Main.class.getResource("modCustScreen.fxml"));
         Parent root = loader.load();
 
         modCustScreenController modCustScreenController = loader.getController();
-        customers customer = custTbl.getSelectionModel().getSelectedItem();
         int divid = customer.getDivId();
         setDivName(divisionsQuery.returnDivisionName(divid));
         modCustScreenController.sendCustomers(customer, currDivision, currUser);

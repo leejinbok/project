@@ -13,9 +13,8 @@ import java.time.*;
 
 public abstract class apptQuery {
     private static ObservableList<appointments> allAppointments = FXCollections.observableArrayList();
-    private static ObservableList<appointments> apptCheck = FXCollections.observableArrayList();
     private static ObservableList<appointments> contactAppointments = FXCollections.observableArrayList();
-    private static ObservableList<appointments> weeklyAppointments = FXCollections.observableArrayList();
+    private static ObservableList<appointments> customerAppointments = FXCollections.observableArrayList();
 
     public static ObservableList<LocalDateTime> bookedStartTimes(int customer) {
         ObservableList<LocalDateTime> bookedAppts = FXCollections.observableArrayList();
@@ -112,11 +111,47 @@ public abstract class apptQuery {
         }
         return contactAppointments;
     }
+
+
     public static ObservableList<appointments> getAllAppointments() {
         allAppointments.clear();
         try {
             String sql = "SELECT * FROM appointments";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                int apptId = rs.getInt("Appointment_ID");
+                String title = rs.getString("Title");
+                String description = rs.getString("Description");
+                String location = rs.getString("Location");
+                String type = rs.getString("Type");
+                Timestamp st = rs.getTimestamp("Start");
+                LocalDateTime start = st.toLocalDateTime();
+                Timestamp e = rs.getTimestamp("End");
+                LocalDateTime end = e.toLocalDateTime();
+                Timestamp c= rs.getTimestamp("Create_Date");
+                LocalDateTime create_date = c.toLocalDateTime();
+                String createdBy =  rs.getString("Created_By");
+                Timestamp last = rs.getTimestamp("Last_Update");
+                LocalDateTime last_update = last.toLocalDateTime();
+                String last_updated_by = rs.getString("Last_Updated_By");
+                int custId = rs.getInt("Customer_ID");
+                int userId = rs.getInt("User_ID");
+                int contactId = rs.getInt("Contact_ID");
+                appointments a = new appointments(apptId,title,description,location,type,start,end,create_date,createdBy,last,last_updated_by,custId,userId,contactId);
+                allAppointments.add(a);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return allAppointments;
+    }
+    public static ObservableList<appointments> getCustomerAppointments(int customerID) {
+        customerAppointments.clear();
+        try {
+            String sql = "SELECT * FROM appointments WHERE Customer_ID = ?";
+            PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+            ps.setInt(1,customerID);
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
                 int apptId = rs.getInt("Appointment_ID");

@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="c195.project.controller.apptScreenController">
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="c195.project.controller.apptScreenController">
    <children>
       <ScrollPane layoutX="120.0" layoutY="111.0" prefHeight="600.0" prefWidth="960.0">
          <content>
@@ -59,10 +59,10 @@
             <Button mnemonicParsing="false" onAction="#deleteButton" text="Delete appt" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_LEFT" layoutX="491.0" layoutY="14.0" prefHeight="50.0" prefWidth="360.0" spacing="20.0">
+      <HBox alignment="CENTER_LEFT" layoutX="491.0" layoutY="14.0" prefHeight="50.0" prefWidth="480.0" spacing="30.0">
          <children>
-            <ComboBox fx:id="monthBox" onAction="#monthCb" prefWidth="120.0" />
-            <ComboBox fx:id="typeBox" onAction="#typeCb" prefWidth="160.0" />
+            <ComboBox fx:id="monthBox" prefWidth="200.0" />
+            <ComboBox fx:id="typeBox" prefWidth="160.0" />
             <Label fx:id="totNumLbl">
                <font>
                   <Font size="24.0" />
@@ -70,7 +70,7 @@
             </Label>
          </children>
       </HBox>
-      <HBox alignment="CENTER_LEFT" layoutX="942.0" layoutY="4.0" prefHeight="120.0" prefWidth="240.0">
+      <HBox alignment="CENTER_LEFT" layoutX="982.0" layoutY="4.0" prefHeight="120.0" prefWidth="160.0">
          <children>
             <VBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="160.0" spacing="10.0">
                <children>
@@ -112,7 +112,7 @@
             <Insets left="10.0" />
          </padding>
       </HBox>
-      <Button layoutX="797.0" layoutY="64.0" mnemonicParsing="false" onAction="#genReport" text="Generate" />
+      <Button layoutX="847.0" layoutY="76.0" mnemonicParsing="false" onAction="#genReport" text="Generate" />
       <Button layoutX="881.0" layoutY="734.0" mnemonicParsing="false" onAction="#addCustomerBtn" text="Customer Menu" />
    </children>
 </AnchorPane>

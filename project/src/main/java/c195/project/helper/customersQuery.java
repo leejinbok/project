@@ -41,14 +41,13 @@ public abstract class customersQuery {
         return null;
     }
 
-    public static ObservableList<customers> returnCustomerName(int customerId) {
-        customerNames.clear();
+    public static customers returnCustomerId(String customerName) {
         try {
-            String sql = "SELECT * FROM customers WHERE Customer_ID = ?";
+            String sql = "SELECT * FROM customers WHERE Customer_Name = ?";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-            ps.setInt(1,customerId);
+            ps.setString(1,customerName);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()){
+            if (rs.next()){
                 int contactId = rs.getInt("Customer_ID");
                 String contactName = rs.getString("Customer_Name");
                 String email = rs.getString("Address");
@@ -60,14 +59,13 @@ public abstract class customersQuery {
                 Timestamp lastUpdate = rs.getTimestamp("Last_Update");
                 String lastUpdatedBy = rs.getString("Last_Updated_By");
                 int divId = rs.getInt("Division_ID");
-
                 customers c = new customers(contactId,contactName,email,postal,phone,localCreate,createdBy,lastUpdate,lastUpdatedBy,divId);
-                customerNames.add(c);
+                return c;
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return customerNames;
+        return null;
     }
 
     public static void deleteCustomers(int customerId) throws SQLException {
