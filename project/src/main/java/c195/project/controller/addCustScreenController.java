@@ -28,7 +28,8 @@ import java.util.ResourceBundle;
  * addCustScreenController - add customers to the program
  */
 public class addCustScreenController implements Initializable {
-    public TextField custNameTxt;
+    @FXML
+    private TextField custNameTxt;
     @FXML
     private TextField addressTxt;
     @FXML

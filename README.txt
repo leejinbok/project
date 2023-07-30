@@ -11,7 +11,7 @@ IDE : IntelliJ IDEA 2023.1.3 Community Edition
 Build #IC-231.9161.38
 Runtime version: 17.0.7+10-b829.16 x86_64
 VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o.
-JavaFX: javafx-sdk-17.0.1
+JavaFX: javafx-sdk-17.0.6
 mySQL connector: 8.0.25
 
 

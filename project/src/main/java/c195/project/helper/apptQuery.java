@@ -287,6 +287,7 @@ public abstract class apptQuery {
      * @param user_id - user ID associated with appointment
      * @param contact_id - contact ID associated with appointment
      * @throws SQLException - throws exceptions for when SQL DB cannot find entries / null entries exist
+     * @return - integer value for rowsAffected
      */
     public static int insert(String title, String description, String location, String type, Timestamp startTime, Timestamp endTime, Timestamp create_date, String created_by, Timestamp last_update, String last_updated_by, int customer_id, int user_id, int contact_id) throws SQLException {
         String sql = "INSERT INTO appointments (Title, Description, Location, Type, Start, End, Create_Date, Created_By, Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)";

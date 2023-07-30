@@ -14,8 +14,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * <p><b><h1>Appointment Scheduler Application</h1></b></p>
+ * <p><b>Appointment Scheduler Application</b></p>
  * Main class creates application that starts the FXMLLoader to login screen and starts the application.
+ * <p><b>LAMBA EXPRESSIONS are found in reportScreenController and modCustScreenController</b></p>
  */
 public class Main extends Application {
     /**

@@ -94,7 +94,7 @@ public class modCustScreenController implements Initializable {
      * @param customer - selected customer object from previous screen
      * @param divisions - takes division ID of previous screen and return division object
      * @param user - user object that originally logged in from login screen
-     * @throws SQLException
+     * @throws SQLException - throws SQLException for bad/nul/void lookups
      */
     public void sendCustomers(customers customer, firstLevelDivisions divisions, users user) throws SQLException {
         currentCustomer = customer;
