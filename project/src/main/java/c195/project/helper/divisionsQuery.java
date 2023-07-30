@@ -11,13 +11,20 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+/**
+ * abstract clas of divisions queries that returns data from the database
+ */
 public abstract class divisionsQuery {
-
-
     private static ObservableList<firstLevelDivisions> dList = FXCollections.observableArrayList();
     private static ObservableList<firstLevelDivisions> divList = FXCollections.observableArrayList();
     private static ObservableList<firstLevelDivisions> returnDivList = FXCollections.observableArrayList();
-    public static firstLevelDivisions selectCountry(int divisionId) {
+
+    /**
+     * returns a division object from taking integer division id as a parameter
+     * @param divisionId - parameter takes integer value of division id
+     * @return - returns a matching firstleveldivisions object for division ID value
+     */
+    public static firstLevelDivisions selectDivisions(int divisionId) {
         try{
             String sql = "SELECT * FROM first_level_divisions WHERE Division_ID = ?";
             PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -41,6 +48,11 @@ public abstract class divisionsQuery {
         return null;
     }
 
+    /**
+     * returns a divisions observableList from taking integer country id as a parameter
+     * @param countryId - parameter takes integer value of country id
+     * @return - returns an observableList of firstleveldivisions objects for matching country ID value
+     */
     public static ObservableList<firstLevelDivisions> selectDivision(int countryId) {
         dList.clear();
         try{
@@ -66,7 +78,12 @@ public abstract class divisionsQuery {
         return dList;
     }
 
-    public static ObservableList<firstLevelDivisions> returnDivisionId(String division) throws SQLException {
+    /**
+     * a method to return an observable list of divisions by searching for matching division name
+     * @param division parameter takes string value of division name
+     * @return returns an observable list of divisions
+     */
+    public static ObservableList<firstLevelDivisions> returnDivisionId(String division) {
         ObservableList<firstLevelDivisions> dList = FXCollections.observableArrayList();
         try{
             String sql = "SELECT * FROM first_level_divisions WHERE Division = ?";
@@ -91,6 +108,11 @@ public abstract class divisionsQuery {
         return dList;
     }
 
+    /**
+     * returns a division observable List from taking integer division id as a parameter
+     * @param divisionID - parameter takes integer value of division id
+     * @return - returns a matching observable list for division ID value
+     */
     public static ObservableList<firstLevelDivisions> returnDivisionName(int divisionID){
         returnDivList.clear();
         try{
@@ -115,6 +137,12 @@ public abstract class divisionsQuery {
         }
         return returnDivList;
     }
+
+    /**
+     * method to return an observableList of divisions with matching country name. Compares values in divisions and countries databases.
+     * @param country_name - parameter takes string country value
+     * @return - observableList of divisions that match country name
+     */
     public static ObservableList<firstLevelDivisions> countryName(String country_name) {
         divList.clear();
         try {

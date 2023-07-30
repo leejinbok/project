@@ -9,9 +9,15 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * abstract class user queries that provides different useful functions for user-related information
+ */
 public abstract class userQuery {
-
-    private static ObservableList<users> allUsers = FXCollections.observableArrayList();
+    /**
+     * a method to select all rows that match with username
+     * @param userName - parameter takes string value to match
+     * @return - returns a users object
+     */
     public static users select(String userName) {
         try {
             String sql = "SELECT * FROM users WHERE User_Name = ?";
@@ -36,6 +42,11 @@ public abstract class userQuery {
         return null;
     }
 
+    /**
+     * a method to get matching passwords to the username provided in the parameter
+     * @param userName - parameter takes string value username
+     * @return - returns observableList of strings that contain matching password with username
+     */
     public static ObservableList<String> getPassword(String userName) {
         ObservableList<String> pw = FXCollections.observableArrayList();
         try {
@@ -53,18 +64,28 @@ public abstract class userQuery {
         return pw;
     }
 
+    /**
+     * generates a popup message with alert type error. Allows user to pass in string parameter to customize message
+     * @param errorMsg - parameter of string type and custom context message
+     */
     public static void errorMessage(String errorMsg) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setContentText(errorMsg);
         alert.showAndWait();
     }
-
-
-    public static void infoMessage(String errorMsg) {
+    /**
+     * generates a popup message with alert type information. Allows user to pass in string parameter to customize message
+     * @param infoMsg - parameter of string type and custom context message
+     */
+    public static void infoMessage(String infoMsg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText(errorMsg);
+        alert.setContentText(infoMsg);
         alert.showAndWait();
     }
+
+    /**
+     * generates a popup message with alert type information. Serves the purpose of confirmation.
+     */
     public static void updatePopup() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Confirmation");

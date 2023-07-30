@@ -1,9 +1,11 @@
 package c195.project.helper;
 
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+/**
+ * abstract class of JDBC - to provide connection from java application to mySQL database
+ */
 public abstract class JDBC {
     private static final String protocol = "jdbc";
     private static final String vendor = ":mysql:";
@@ -13,8 +15,12 @@ public abstract class JDBC {
     private static final String driver = "com.mysql.cj.jdbc.Driver"; // Driver reference
     private static final String userName = "sqlUser"; // Username
     private static String password = "passw0rd!"; // Password
+
     public static Connection connection;  // Connection Interface
 
+    /**
+     * function to start the connection to the mySQL database
+     */
     public static void openConnection()
     {
         try {
@@ -28,6 +34,9 @@ public abstract class JDBC {
         }
     }
 
+    /**
+     * function to close the connection to mySQL database.
+     */
     public static void closeConnection() {
         try {
             connection.close();

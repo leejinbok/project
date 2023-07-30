@@ -226,23 +226,22 @@ public class apptScreenController implements Initializable {
         int apptID = appointment.getAppointmentID();
         String apptType = appointment.getType();
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Confirmation");
-            alert.setContentText("Are you sure you wish to delete this customer?");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation");
+        alert.setContentText("Are you sure you wish to delete this customer?");
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.isPresent() && result.get()==ButtonType.OK) {
-                apptQuery.deleteAppts(((appTblView.getSelectionModel().getSelectedItem())).getAppointmentID());
-                appTblView.setItems(apptQuery.getAllAppointments());
-                try {
-                    totalNumberLbl.setText(String.valueOf(apptQuery.apptCount()));
-                    userQuery.infoMessage("Appointment number | " + apptID + " | type | " + apptType + " | has been deleted");
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get()==ButtonType.OK) {
+            apptQuery.deleteAppts(((appTblView.getSelectionModel().getSelectedItem())).getAppointmentID());
+            appTblView.setItems(apptQuery.getAllAppointments());
+            try {
+                totalNumberLbl.setText(String.valueOf(apptQuery.apptCount()));
+                userQuery.infoMessage("Appointment number | " + apptID + " | type | " + apptType + " | has been deleted");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-
         }
+    }
 
     /**
      * button to modify selected appointment from appointments tableView. Sends selected appointment and user data to next screen to modify.

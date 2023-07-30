@@ -203,6 +203,8 @@ public class addCustScreenController implements Initializable {
             userQuery.errorMessage("Please select a customer to delete");
             return;
         }
+        int customerID = currCustomer.getCustomer_id();
+        String customerName = currCustomer.getCustomer_name();
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation");
@@ -215,6 +217,7 @@ public class addCustScreenController implements Initializable {
                 return;
             }
             customersQuery.deleteCustomers(currCustomer.getCustomer_id());
+            userQuery.infoMessage("Customer ID |  " + customerID + "  | with Name |  " + customerName + "  | has been successfully deleted");
             custTbl.setItems(customers.getAllCustomers());
         }
     }

@@ -21,7 +21,10 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
-public class reportScreenController implements Initializable {
+/**
+ * controller for contacts report screen
+ */
+public class reportScreenController {
     @FXML
     private TableColumn<appointments, Integer> userIdCol;
     @FXML
@@ -44,8 +47,13 @@ public class reportScreenController implements Initializable {
     Parent scene;
     private appointments customAppointment = new appointments(1,"initial","first","here","initial", LocalDateTime.now(),LocalDateTime.now(),LocalDateTime.now(),"Bob", Timestamp.valueOf(LocalDateTime.now()),"Bob",1,1,1);
 
+    /**
+     * <p><b>LAMBDA EXPRESSION</b></p>
+     * a function to manually set values of current custom appointment values from previous screen.
+     * <p>lambda expression in forEach is used to succinctly and cleanly pass in the values from appointments ObservableList to current appointments</p>
+     * @param contactAppointment - takes in parameter divs from SQL lookup of division names
+     */
     public void sendReport(ObservableList<appointments> contactAppointment) {
-
         contactAppointment.forEach(currAppt -> customAppointment.setAppointmentID(currAppt.getAppointmentID()));
         contactAppointment.forEach(currAppt -> customAppointment.setTitle(currAppt.getTitle()));
         contactAppointment.forEach(currAppt -> customAppointment.setDescription(currAppt.getDescription()));
@@ -71,7 +79,10 @@ public class reportScreenController implements Initializable {
             custIdCol.setCellValueFactory(new PropertyValueFactory<>("customer_id"));
             userIdCol.setCellValueFactory(new PropertyValueFactory<>("user_id"));
     }
-
+    /**
+     * returns to main appointments screen
+     * @param actionEvent - on press of return button on screen.
+     */
     public void returnButton(ActionEvent actionEvent) {
         stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
         try {
@@ -82,10 +93,5 @@ public class reportScreenController implements Initializable {
         stage.setScene(new Scene(scene));
         stage.centerOnScreen();
         stage.show();
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
     }
 }

@@ -190,6 +190,10 @@ public class modApptScreenController implements Initializable {
         currContacts = contacts;
     }
 
+    /**
+     * cancel button to go back to the main appointment screen
+     * @param actionEvent - on button press of cancel button
+     */
     public void cancelButton(ActionEvent actionEvent) {
         stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
         try {
@@ -202,6 +206,16 @@ public class modApptScreenController implements Initializable {
         stage.show();
     }
 
+    /**
+     * Items initialized when screen opens. The data for the dates, start/end times, customer box and contacts box are populated.
+     * @param location
+     * The location used to resolve relative paths for the root object, or
+     * {@code null} if the location is not known.
+     *
+     * @param resources
+     * The resources used to localize the root object, or {@code null} if
+     * the root object was not localized.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         startDatePicker.setValue(LocalDate.now());
@@ -216,7 +230,12 @@ public class modApptScreenController implements Initializable {
         }
     }
 
-
+    /**
+     * method to receive selected appointment and user data from previous screen. Maintains the value of these objects and helps pre-populate the fields.
+     * @param appointment - takes in the selected appointment object parameter from previous screen
+     * @param user - takes in user data from original login screen to keep consistency and log data.
+     * @throws SQLException - throws exceptions for when SQL DB cannot find entries / null entries exist
+     */
     public void sendAppointments(appointments appointment, users user) throws SQLException {
         //sets current user and appointment from received values
         currentAppointment = appointment;

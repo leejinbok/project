@@ -27,6 +27,9 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
+/**
+ * Controller to modify selected customer information
+ */
 public class modCustScreenController implements Initializable {
     @FXML
     private TextField idTxt1;
@@ -45,6 +48,12 @@ public class modCustScreenController implements Initializable {
     private customers currentCustomer;
     private users currUser;
     private firstLevelDivisions currDivision;
+
+    /**
+     * Saves customer's information. Checks to see if there's any null fields. Writes over previous customer's information.
+     * @param actionEvent - On press of save button, with all the fields filled out.
+     * @throws SQLException - throws exceptions for when SQL DB cannot find entries / null entries exist
+     */
     public void saveButtonOnAction(ActionEvent actionEvent) throws SQLException {
 
         if (country.getValue() == null) {
@@ -80,6 +89,13 @@ public class modCustScreenController implements Initializable {
         stage.show();
     }
 
+    /**
+     * Receives selected customer, division, and user information from previous screen. <p>This information is used to pre-populate current screen data and fields.</p>
+     * @param customer - selected customer object from previous screen
+     * @param divisions - takes division ID of previous screen and return division object
+     * @param user - user object that originally logged in from login screen
+     * @throws SQLException
+     */
     public void sendCustomers(customers customer, firstLevelDivisions divisions, users user) throws SQLException {
         currentCustomer = customer;
         int divid = currentCustomer.getDivId();
@@ -102,7 +118,7 @@ public class modCustScreenController implements Initializable {
         countryName = countryName.replaceAll("[\\[\\](){}]","");
 
         state.setItems(divisionsQuery.countryName(countryName));
-        firstLevelDivisions selectedState = divisionsQuery.selectCountry(divid);
+        firstLevelDivisions selectedState = divisionsQuery.selectDivisions(divid);
         for (firstLevelDivisions f : state.getItems()) {
             if (f.getDivision_id()== selectedState.getDivision_id()){
                 state.setValue(f);
@@ -112,7 +128,8 @@ public class modCustScreenController implements Initializable {
 
     /**
      * <p><b>LAMBDA EXPRESSION</b></p>
-     * a function to manual set values of current division from observable list of divisions from SQL lookup.
+     * a function to manually set values of current division from observable list of divisions from SQL lookup.
+     * a lambda expression in the forEach was used to make the code succinct and look clean.
      * @param divs - takes in parameter divs from SQL lookup of division names
      */
     public void setDivName (ObservableList<firstLevelDivisions> divs) {
@@ -123,19 +140,13 @@ public class modCustScreenController implements Initializable {
         divs.forEach(newDiv -> currDivision.setCreated_by(newDiv.getCreated_by()));
         divs.forEach(newDiv -> currDivision.setLast_update(newDiv.getLast_update()));
         divs.forEach(newDiv -> currDivision.setLast_updated_by(newDiv.getLast_updated_by()));
-/*
-        for (firstLevelDivisions newDiv : divs) {
-            currDivision.setDivision_id(newDiv.getDivision_id());
-            currDivision.setDivision(newDiv.getDivision());
-            currDivision.setCountry_id(newDiv.getCountry_id());
-            currDivision.setCreate_date(newDiv.getCreate_date());
-            currDivision.setCreated_by(newDiv.getCreated_by());
-            currDivision.setLast_update(newDiv.getLast_update());
-            currDivision.setLast_updated_by(newDiv.getLast_updated_by());
-
- */
     }
 
+    /**
+     * Button to return to previous screen.
+     * @param actionEvent - on press of cancel button
+     * @throws IOException - throws exceptions for when FXML loader cannot obtain resources correctly
+     */
     public void cancelButton(ActionEvent actionEvent) throws IOException {
         Stage stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
         Parent scene;
@@ -149,13 +160,28 @@ public class modCustScreenController implements Initializable {
         stage.show();
     }
 
-    public void countryCB(ActionEvent actionEvent) throws SQLException, NullPointerException {
+    /**
+     * method to populate appropriate divisions data when country data is selected
+     * @param actionEvent - on press of country comboBox
+     * @throws NullPointerException - throws nullPointerException when there's no value selected for country comboBox
+     */
+    public void countryCB(ActionEvent actionEvent) throws NullPointerException {
         if (country.getValue()!= null) {
             int Id = country.getValue().getCountry_ID();
             state.setItems(divisionsQuery.selectDivision(Id));
         }
     }
 
+    /**
+     * Items that are initialized on start of screen. The country comboBox values are pre-populated.
+     * @param location
+     * The location used to resolve relative paths for the root object, or
+     * {@code null} if the location is not known.
+     *
+     * @param resources
+     * The resources used to localize the root object, or {@code null} if
+     * the root object was not localized.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         country.setItems(countries.getAllCountries());
