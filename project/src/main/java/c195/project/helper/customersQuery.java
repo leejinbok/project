@@ -83,7 +83,6 @@ public abstract class customersQuery {
             ps.setString(6, username);
             ps.setInt(7, divId);
             ps.setInt(8, id);
-
             ps.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -115,5 +114,6 @@ public abstract class customersQuery {
         ps.setTimestamp(7,last_update);
         ps.setString(8,last_updated_by);
         ps.setInt(9,divId);
+        ps.execute();
     }
 }

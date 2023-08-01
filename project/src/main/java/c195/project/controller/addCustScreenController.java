@@ -68,6 +68,13 @@ public class addCustScreenController implements Initializable {
      */
     public void saveButtonOnAction(ActionEvent actionEvent) throws SQLException {
         try {
+            if (custNameTxt.getText().isEmpty() ||
+                    addressTxt.getText().isEmpty() ||
+                    postalTxt.getText().isEmpty() ||
+                    phoneTxt.getText().isEmpty()) {
+                userQuery.errorMessage("Please fill in all the boxes");
+                return;
+            }
 
             currentCustomer.setCustomer_name(custNameTxt.getText());
             currentCustomer.setAddress(addressTxt.getText());
@@ -89,27 +96,11 @@ public class addCustScreenController implements Initializable {
             }
             setDivName(divisionsQuery.returnDivisionId(state.getValue().toString()));
 
-            if (custNameTxt.getText().isEmpty() ||
-                    addressTxt.getText().isEmpty() ||
-                    postalTxt.getText().isEmpty() ||
-                    phoneTxt.getText().isEmpty()) {
-                userQuery.errorMessage("Please fill in all the boxes");
-                return;
-            }
 
             customersQuery.insert(currentCustomer.getCustomer_name(), currentCustomer.getAddress(), currentCustomer.getPostal(), currentCustomer.getPhone(), ts, currentCustomer.getCreated_by(), ut, currentCustomer.getLast_updated_by(), currentCustomer.getDivId());
             custTbl.setItems(customers.getAllCustomers());
-            userQuery.infoMessage("New Contact saved");
+            userQuery.infoMessage("New Customer saved");
 
-            stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
-            try {
-                scene = FXMLLoader.load(Main.class.getResource("apptScreen.fxml"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            stage.setScene(new Scene(scene));
-            stage.centerOnScreen();
-            stage.show();
         } catch (NullPointerException e){
             System.out.println(e.getMessage());
         }
