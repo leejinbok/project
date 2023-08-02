@@ -95,6 +95,7 @@ public class addCustScreenController implements Initializable {
                 return;
             }
             setDivName(divisionsQuery.returnDivisionId(state.getValue().toString()));
+            currentCustomer.setDivId(currDivision.getDivision_id());
 
 
             customersQuery.insert(currentCustomer.getCustomer_name(), currentCustomer.getAddress(), currentCustomer.getPostal(), currentCustomer.getPhone(), ts, currentCustomer.getCreated_by(), ut, currentCustomer.getLast_updated_by(), currentCustomer.getDivId());
@@ -209,6 +210,7 @@ public class addCustScreenController implements Initializable {
                 return;
             }
             customersQuery.deleteCustomers(currCustomer.getCustomer_id());
+            apptQuery.deleteCustAppts(currCustomer.getCustomer_id());
             userQuery.infoMessage("Customer ID |  " + customerID + "  | with Name |  " + customerName + "  | has been successfully deleted");
             custTbl.setItems(customers.getAllCustomers());
         }

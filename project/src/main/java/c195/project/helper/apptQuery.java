@@ -229,6 +229,12 @@ public abstract class apptQuery {
         ps.setInt(1,apptId);
         ps.executeUpdate();
     }
+    public static void deleteCustAppts(int custId) throws SQLException {
+        String sql = "DELETE FROM appointments WHERE Customer_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1,custId);
+        ps.executeUpdate();
+    }
 
     /**
      * a function to update the appointments database with same/new values. Appointment ID(ID) is primary key
